@@ -9,12 +9,12 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-data_df = pd.read_csv('Ba-133 Calibration 009.csv', skiprows = 6)
+data_df = pd.read_csv('../csv/Ba-133_Calibration_009.csv', skiprows = 6)
 
 x = np.array(data_df['Channel'])
 y = np.array(data_df['Counts'])
 
 plt.plot(x, y)
 
-
+plt.show()
 
