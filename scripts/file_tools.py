@@ -48,6 +48,24 @@ def get_data(loc, source_name=None):
     data_set = [read_csv(f) for f in to_search]
     return data_set
 
+def read_lit(loc):
+    keys = ["energy", "energy_pm", "intensity", "intensity_pm", "dose", "dose_pm"]
+    with open(loc, "r") as lit:
+        res = {}
+        for line in lit.readlines():
+            line = line.strip()
+            if len(line.split()) == 1:
+                current = line
+                res[current] = []
+                continue
+            res[current].append(dict(zip(keys, [float(x) for x in line.split() if x != "%"])))
+    return res
+
+
 # if __name__=="__main__":
 #     d = read_csv("Ba-133_Calibration_000.csv")
 #     print(type(d["Channel"]))
+
+# if __name__=="__main__":
+#     d = read_lit("../calibration_data/litterature")
+#     print(d)
