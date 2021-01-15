@@ -43,7 +43,7 @@ def get_run_names(folder_loc, source_name=None):
     paths_fit = [os.path.join(folder_loc, f) for f in all_files if f.split("_")[0] == source_name]
     return paths_fit
 
-def get_data(loc, source_name):
+def get_data(loc, source_name=None):
     to_search = get_run_names(loc, source_name=source_name)
     data_set = [read_csv(f) for f in to_search]
     return data_set
