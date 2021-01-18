@@ -176,7 +176,7 @@ def get_noise(for_model):
 
     
 
-def chi_sqd(prediction):
+def chi_sqd(prediction, do_plot = False):
     ##take prediction from the model and data and compute chisqud
     total_chi = 0
     for key in prediction:
@@ -192,10 +192,11 @@ def chi_sqd(prediction):
             chi_vec = (diff/noise_model)[mask]
             chi_cur = np.sum(chi_vec)
             total_chi += chi_cur
-            # plt.clf()
-            # plt.plot(data_counts)
-            # plt.plot(prediction[key]["Counts"])
-            # plt.show()
+        if do_plot:
+            plt.clf()
+            plt.plot(data_counts)
+            plt.plot(prediction[key]["Counts"])
+            plt.savefig("../data_test/calibration_sources/fit_example"+key+".png")
     return total_chi
 
 
@@ -221,4 +222,7 @@ print(t2-t1)
 import newton_solver as ns
 print(init_guess)
 
-ns.newton_solve(model, get_resid, get_noise, chi_sqd, model_dif, init_guess)
+params, cov = ns.newton_solve(model, get_resid, get_noise, chi_sqd, model_dif, init_guess)
+print(params[:2], init_guess[:2])
+
+chi_sqd(model(params), do_plot=True)

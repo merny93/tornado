@@ -74,3 +74,4 @@ def newton_solve(model_func, resid_func, noise_func, chi_func, diff_func, init_p
             print("with errors given by :", np.sqrt(np.diag(lhs_inv)))
             break
         chi_org = chi_now
+    return pars, np.sqrt(np.diag(lhs_inv))
