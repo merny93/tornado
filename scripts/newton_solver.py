@@ -68,7 +68,8 @@ def newton_solve(model_func, resid_func, noise_func, chi_func, diff_func, init_p
 
         print("On the: " , i+1, " itteration and params are: ", pars)
         #this next step is not really needed but its nice to see how chi^2 changes
-        print("Chi^2 is now: ", chi_now := chi_func(model_func(pars)))
+        chi_now = chi_func(model_func(pars))
+        print("Chi^2 is now: ", chi_now)
         if np.abs(chi_now - chi_org) < 0.1:
             print("we have converged")
             print("with errors given by :", np.sqrt(np.diag(lhs_inv)))

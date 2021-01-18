@@ -29,8 +29,9 @@ calib_na = ft.read_csv("../data/calibration/Na-22_Calibration_009.csv")
 from scipy.optimize import curve_fit
 def gaussian_fit(x, a, mean, sigma):
     return a*np.exp(-(x - mean)**2/(2*sigma**2))
-
-res = curve_fit(gaussian_fit, x := calib_na["Channel"], y := calib_na["Counts"], p0 = [1, 1350, 2]) #look at this walrus
+x = calib_na["Channel"]
+y = calib_na["Counts"]
+res = curve_fit(gaussian_fit, x, y, p0 = [1, 1350, 2]) #look at this walrus
 popt = res[0]
 # plt.clf()
 # plt.plot(x, y)
