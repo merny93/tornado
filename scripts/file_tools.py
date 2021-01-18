@@ -37,7 +37,7 @@ def get_run_names(folder_loc, source_name=None):
         returns the files with path that fit the name (delimited by _)
     """
     import os
-    all_files = os.listdir()
+    all_files = os.listdir(folder_loc)
     if source_name is None:
         return [os.path.join(folder_loc, f) for f in all_files]
     paths_fit = [os.path.join(folder_loc, f) for f in all_files if f.split("_")[0] == source_name]
@@ -54,6 +54,8 @@ def read_lit(loc):
         res = {}
         for line in lit.readlines():
             line = line.strip()
+            if line[0] =="#":
+                continue
             if len(line.split()) == 1:
                 current = line
                 res[current] = []
@@ -69,3 +71,7 @@ def read_lit(loc):
 # if __name__=="__main__":
 #     d = read_lit("../calibration_data/litterature")
 #     print(d)
+
+if __name__=="__main__":
+    d = get_data('../data/calibration')
+    print(d)
