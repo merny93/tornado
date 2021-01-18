@@ -7,9 +7,8 @@ import matplotlib.pyplot as plt
 ##get a basic idea of the map from channels to energy assuming that channel*alpha = energy
 ##do this with a single fit of one of the calibration runs of sodium as the peak is well defined
 
-##next we will transition into log space where gaussians are simply inverted parabolas
 
-##Now lets establish a noise model in the log space which is done by taking the std of the white noise on small sections
+##Now lets establish a noise model which is done by taking the std of the white noise on small sections
 ##this is important as we see that not all data is treated equal and thus we must weigh them as such
 
 ##Now we will try to find a model that fits more accuratly the channel -> energy.
@@ -52,6 +51,20 @@ inital_count = 1 ##FIXXXXXX
 #this allows us to get a good estimate of the higest and lowest peaks we are willing to fit. 
 #and strongest and weakest 
 
+##now we pick out the noise floor as follows:
+
+window=20
+#switch to noise later
+calib_noise = ft.read_csv("../data/calibration/Na-22_Calibration_009.csv")
+padded_noise = np.pad(calib_noise["Counts"],(window//2, window//2), mode="edge")
+array_view = np.lib.stride_tricks.as_strided(padded_noise, shape=(calib_noise["Counts"].size,window), strides=[padded_noise.strides[0] for i in range(2)])
+noise_model = np.std(array_view, axis=-1)
+padded_noise = np.pad(noise_model,(window//2, window//2), mode="edge")
+array_view = np.lib.stride_tricks.as_strided(padded_noise, shape=(noise_model.size,window), strides=[padded_noise.strides[0] for i in range(2)])
+noise_model = np.mean(array_view, axis=-1)
+##we also want to do a running average
+plt.plot(noise_model)
+plt.show()
 ##lets side step and read in the literature:
 lit_vals = ft.read_lit("../calibration_data/litterature")
 
@@ -60,6 +73,5 @@ lit_vals = ft.read_lit("../calibration_data/litterature")
 
 
 def model(params): #params is gonna be a list of all the parameters we care about
-
-
+    pass
 
