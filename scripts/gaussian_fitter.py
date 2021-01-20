@@ -2,7 +2,7 @@ import numpy as np
 import file_tools as ft
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
-from scipy.special import erf
+from scipy.special import erfc
 
 
 def collapse_data(data_list):
@@ -13,8 +13,8 @@ def collapse_data(data_list):
 
 def total_fit(x,mean,sigma,beta,a0,a1,a2):
     gaus = a0*np.exp(-(x - mean)**2/(2*sigma**2))
-    expo = a1*np.exp((x-mean)/beta)*erf((x-mean)/(np.sqrt(2)*sigma)+sigma/(np.sqrt(2)*beta))
-    step = a2*erf((x-mean)/(np.sqrt(2)*sigma))
+    expo = a1*np.exp((x-mean)/beta)*erfc((x-mean)/(np.sqrt(2)*sigma)+sigma/(np.sqrt(2)*beta))
+    step = np.log(a2)*erfc((x-mean)/(np.sqrt(2)*sigma))
     return gaus + expo + step
 
 def plotter(num, key, guess_mean, guess_width = 2, guess_height=1, plot = True):
@@ -29,7 +29,7 @@ def plotter(num, key, guess_mean, guess_width = 2, guess_height=1, plot = True):
     y = collapse_data(elements[key])[num[0]:num[1]] # counts
     uncert = np.sqrt(y) # uncertainty of counting
     #fit the gaussian
-    res = curve_fit(total_fit, x, y, p0 = [guess_mean, guess_width, 100,guess_height,1,1], sigma = uncert) 
+    res = curve_fit(total_fit, x, y, p0 = [guess_mean, guess_width, 100,guess_height,1,1], sigma = uncert, bounds = (0,1e5)) 
     # recover the parameter values
     popt = res[0]
     # The uncertainty of the fit
@@ -55,39 +55,43 @@ def plotter(num, key, guess_mean, guess_width = 2, guess_height=1, plot = True):
         axs[1].errorbar(x, y-total_fit(x, *popt), yerr = uncert, linestyle = "None")
         axs[1].set_ylabel('Residuals') #, position = (0,0))
         plt.xlabel('Channel number')
-        plt.savefig('../figures/{}_gaussian.png'.format(key))
-    # print(uncertainty[1])
-    return [popt[1], uncertainty[1]]
+        plt.savefig('../figures/{}_gaussian.pdf'.format(key))
+    print(popt)
+    return [popt[0], uncertainty[1]]
 
-def line(y,a,b):
-    return (y-b)/a
+def reverse_line(x,a,b):
+    return (x-b)/a
 
-def line_fit(points_y, litterature,plot = True):
+def line(x,a,b):
+    return a*x+b
+
+def line_fit(points_y, litterature, plot = True):
     '''
     Takes in
     points_y: calibration data and uncertainty
     litterature: litterature data
     plot: output a plot file
     ''' 
-    res = curve_fit(line, litterature[0], points_y[:,0],  p0 = [0.29, -25], sigma = points_y[:,1])
+    res = curve_fit(reverse_line, litterature[0], points_y[:,0],  p0 = [0.29, -25], sigma = points_y[:,1])
     popt = res[0]
     uncertainty = np.sqrt(np.diag(res[1]))
-    chi_sqd = np.sum((points_y-line(litterature[0], *popt))**2/points_y[:,1])
+    chi_sqd = np.sum((points_y[:,0]-reverse_line(litterature[0], *popt))**2/points_y[:,1])
     if plot:
         # plot the line
         plt.clf()
-        fig, axs = plt.subplots(2, sharex=True, sharey=False, gridspec_kw = {'hspace': 0})
+        fig, axs = plt.subplots(2,1, sharex=False, sharey=False, gridspec_kw = {'hspace': 0})
         fig.suptitle('Line Fit')
-        axs[0].scatter(points_y[:,0], litterature[0], marker = '.', label = 'data')
-        axs[0].plot(litterature[0], line(litterature[0], *popt), color = 'orange', label = 'Linear Fit')
-        axs[0].errorbar(litterature[0], line(litterature[0], *popt), xerr = points_y[:,1], linestyle = "None")
-        axs[0].set_ylabel('Energy', position = (0,0))
+        axs[0].scatter( litterature[0], points_y[:,0],marker = '.', label = 'data')
+        axs[0].errorbar(litterature[0],points_y[:,0],  yerr = points_y[:,1], linestyle = "None")
+        axs[0].plot(line(points_y[:,0], *popt), points_y[:,0], color = 'orange', label = 'Linear Fit')
+        axs[0].set_ylabel('Channel Number')
         axs[0].legend()
         #plot the residuals
-        axs[1].scatter(points_y[:,0], points_y[:,0]-line(litterature[0], *popt), marker = '.')
-        axs[1].errorbar(points_y[:,0], points_y[:,0]-line(litterature[0], *popt), xerr = points_y[:,1], linestyle = "None")
-        plt.xlabel('Channel Number')
-        plt.savefig('../figures/line.png')
+        axs[1].scatter(litterature[0],points_y[:,0]-reverse_line(litterature[0], *popt),  marker = '.')
+        axs[1].errorbar(litterature[0],points_y[:,0]-reverse_line(litterature[0], *popt),  yerr = points_y[:,1], linestyle = "None")
+        axs[1].set_ylabel('Residuals')
+        plt.xlabel('Energy (keV)')
+        plt.savefig('../figures/line.pdf')
     print(popt, uncertainty, chi_sqd)
 
 if __name__ == "__main__":
@@ -95,8 +99,8 @@ if __name__ == "__main__":
     for element in ft.SOURCE_NAMES:
         elements[element] = ft.get_data("../data/calibration", source_name = element)
     line_points = []
-    line_points.append(plotter(num = [1200,1550], key = 'Na-22', guess_mean = 1360))
-    line_points.append(plotter(num = [900,1200], key = 'Ba-133', guess_mean = 970))
+    line_points.append(plotter([1200,1450], 'Na-22', guess_mean = 1360))
+    line_points.append(plotter([900,1050], 'Ba-133', guess_mean = 970))
     line_points.append(plotter([1550,1910], 'Cs-137', 1742, guess_width = 58, guess_height=77))
-    line_points.append(plotter([315,390], 'Co-57', 350,  guess_width = 2, guess_height=1600))
+    line_points.append(plotter([315,380], 'Co-57', 350,  guess_width = 2, guess_height=1600))
     line_fit(np.array(line_points), [[511.0, 356.0129, 661.657, 122.06065],[5, 7, 3, 12]])

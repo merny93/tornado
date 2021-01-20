@@ -1,5 +1,21 @@
 SOURCE_NAMES = ("Ba-133", "Co-57", "Cs-137", "Na-22")
 
+def _reader(fname):
+    if fname.split(".")[-1]=="Chn":
+        res = read_chn(fname)
+    else:
+        res = read_csv(fname)
+    return res
+
+def read_chn(fname):
+    from chn2csv import load_chn as _load_chn
+    import numpy as np
+    res = _load_chn(fname, delimiter=",")
+    res["Channel"] = np.array(res["Channel"], dtype= int)
+    res["Counts"] = np.array(res["Counts"])
+    return res
+
+
 def read_csv(fname):
     """
         read in the csv and output dictionary with all meta data
@@ -45,7 +61,7 @@ def get_run_names(folder_loc, source_name=None):
 
 def get_data(loc, source_name=None):
     to_search = get_run_names(loc, source_name=source_name)
-    data_set = [read_csv(f) for f in to_search]
+    data_set = [_reader(f) for f in to_search]
     return data_set
 
 def read_lit(loc):
