@@ -80,12 +80,7 @@ def load_chn(path=None, **kwargs):
 
     return d
 
-
-path = 'Ba-133 Calibration 000.Chn'
-
-
-d = load_chn(path)
-
+d = load_chn('Ba-133 Calibration 000.Chn')
 
 import matplotlib.pyplot as plt
 
