@@ -2,6 +2,7 @@ import sys
 import gaussian_fitter as g_f 
 import matplotlib.pyplot as plt 
 import numpy as np
+import file_tools as ft
 
 def calibrator(path, plotting = False):
     '''
