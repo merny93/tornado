@@ -104,7 +104,8 @@ def calibrator_fit(data):
                    plotter(data, [1550,1910], 'Cs-137', 1742, guess_width = 58, guess_height=77),
                    plotter(data, [315,380], 'Co-57', 350,  guess_width = 2, guess_height=1600)]
     [params,unc] = line_fit(np.array(line_points), [[511.0, 356.0129, 661.657, 122.06065],[5, 7, 3, 12]])
-    return param, unc
+
+    return params, unc
 
 if __name__ == "__main__":
     elements = {}
