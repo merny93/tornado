@@ -10,7 +10,7 @@ import time      as _t
 import struct    as _struct
 import numpy     as _n
 import os        as _os
-
+_s.settings['ignore_warnings']=True
 
 def load_chn(path=None, **kwargs):
     """
@@ -79,7 +79,7 @@ def load_chn(path=None, **kwargs):
         real_time   = 0.02*real_time_20ms,
         live_time   = 0.02*live_time_20ms,
         path        = path,)
-
+    # d["header"] = {"description" :info, "start_time" : start, "real_time" : 0.02*real_time_20ms, "live_time" : 0.02*live_time_20ms, "path": path}
     return d
 
 def load_chns(paths=None, combine=False, **kwargs):
@@ -142,6 +142,6 @@ def convert_chn_to_csv(chn_paths=None, output_dir=None):
 
     return ds
     
-    
-convert_chn_to_csv()
+if __name__=="__main__":
+    convert_chn_to_csv()
 

@@ -11,9 +11,12 @@ def read_chn(fname):
     from chn2csv import load_chn as _load_chn
     import numpy as np
     res = _load_chn(fname, delimiter=",")
-    res["Channel"] = np.array(res["Channel"], dtype= int)
-    res["Counts"] = np.array(res["Counts"])
-    return res
+    res_format = {}
+    res_format["Channel"] = np.array(res["Channel"], dtype= int)
+    res_format["Counts"] = np.array(res["Counts"])
+    for key in res.hkeys:
+        res_format[key] = res.h(key)
+    return res_format
 
 
 def read_csv(fname):
@@ -89,5 +92,5 @@ def read_lit(loc):
 #     print(d)
 
 if __name__=="__main__":
-    d = get_data('../data/calibration')
-    print(d)
+    d = read_chn("test.Chn")
+    print(d.keys())
