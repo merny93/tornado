@@ -1,6 +1,7 @@
 SOURCE_NAMES = ("Ba-133", "Co-57", "Cs-137", "Na-22")
 
 def _reader(fname):
+    print(fname)
     if fname.split(".")[-1]=="Chn":
         res = read_chn(fname)
     else:

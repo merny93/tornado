@@ -3,8 +3,9 @@ import gaussian_fitter as g_f
 import matplotlib.pyplot as plt 
 import numpy as np
 import file_tools as ft
+from os import path
 
-def calibrator(path, plotting = False):
+def calibrator(sup_path, plotting = False):
     '''
     Reads in the path of a data set. This path folder must contain folders called
     00_Other_Sources
@@ -15,8 +16,9 @@ def calibrator(path, plotting = False):
     '''
     elements1, elements2 = {},{}
     for element in ft.SOURCE_NAMES:
-        elements1[element] = ft.get_data(path + "/00_Other_Sources", source_name = element)
-        elements2[element] = ft.get_data(path + "/04_Other_Sources", source_name = element)
+        print(path.join(sup_path,"00_Other_Sources", element))
+        elements1[element] = ft.get_data(path.join(sup_path,"00_Other_Sources", element), source_name = element)
+        elements2[element] = ft.get_data(path.join(sup_path, "04_Other_Sources", element), source_name = element)
     params1, unc1 = g_f.calibrator_fit(elements1)
     params2, unc2 = g_f.calibrator_fit(elements2)
 
@@ -26,11 +28,11 @@ def calibrator(path, plotting = False):
         x = np.linspace(0,2047,2048)
         plt.plot(x, g_f.line(x, *params1))
         plt.plot(x, g_f.line(x, *params2))
-        plt.savefig(path+'calibration_{}.pdf'.format(path))
+        plt.savefig(path.join(sup_path,'calibration_{}.pdf').format(path))
 
-    np.savez(path + 'calibration.npz', params1 = params1, params2 = params2, unc1 = unc1, unc2 = unc2)
+    np.savez(path.join(sup_path,'calibration.npz',element), params1 = params1, params2 = params2, unc1 = unc1, unc2 = unc2)
     return params1,unc1,params2,unc2
 
 if __name__ == '__main__':
-    calibrator(sys.argv[1], plotting=True)
+    calibrator(str(sys.argv[1]), plotting=True)
 
