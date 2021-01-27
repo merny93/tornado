@@ -1,0 +1,69 @@
+In this archive, you will find a folder containing the requested angles. Within each angle folder is a roughly time-ordered list of folders containing the data from each measurement:
+
+
+
+00 Other Sources: At the beginning of the day this data was taken, we first blocked the strong Cs-137 source, rotated the angle away from its direct line, and collected data for a variety of other sources (one at a time).
+
+
+
+01 No Scatterer: We rotated the arm to near the specified angle (see image in Setup folder), and collected data with no scattering target.
+
+
+
+02 [Scatterer name]: We inserted one scatterer after another and collected data.
+
+
+
+03 No Scatterer: Repeated step 01.
+
+
+
+04 Other Sources: Repeated step 00.
+
+
+
+The Setup folder contains photos of the angle dial, and two "overview" shots of the whole system.
+
+Each requested data file is a *.Chn, which can be opened with
+mcphysics.data.load_chn(), load_chns(), load_chn_directory(),
+or plotted with
+mcphysics.data.plot_chn(), plot_chns(), plot_chn_directory():
+
+
+https://github.com/Spinmob/mcphysics#mcphysicsdata
+
+
+
+More information about how these functions work can be found with python's help() function or the help functionality built into your IDE (e.g. Spyder). The returned object is a databox:
+
+https://github.com/Spinmob/spinmob/wiki/2.-Data-Handling
+
+
+
+The first column of each databox is the MCA channel number, and the second is the number of counts. The databox header contains useful information like the start time of the acquisition.
+
+
+
+Finally, note that not all requested data may be available, and any data not delivered is credited back to you. You can either ask us if it's possible to take the originally requested data, or you can request additional data (let us know if you do).
+The file log.txt lists the requested and delivered data, along with your total file count, which may be less than your quota.
+
+You will see entries like this:
+
+
+requester.name@mail.mcgill.ca requesting 2 files for [measurement conditions]:
+
+    2/60: Transferred file 0
+
+    3/60: Transferred file 17
+
+
+
+The first part of each transferred file entry shows the current file count relative to the quota, in this case, 2/60 for file 0 and 3/60 for file 17.
+The file indices are selected at random from what's available.
+
+
+As always, we expect confusion and questions, so don't be shy about asking!
+
+
+
+

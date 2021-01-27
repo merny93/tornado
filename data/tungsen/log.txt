@@ -1,0 +1,140 @@
+
+henri.lamarre@mail.mcgill.ca requesting 12 files per target at 55 degrees:
+  Tungsten
+    61/180: Transferred file 4
+    62/180: Transferred file 6
+    63/180: Transferred file 8
+    64/180: Transferred file 13
+    65/180: Transferred file 15
+    66/180: Transferred file 18
+    67/180: Transferred file 22
+    68/180: Transferred file 25
+    69/180: Transferred file 27
+    70/180: Transferred file 30
+    71/180: Transferred file 33
+    72/180: Transferred file 39
+  No Scatterer (Before)
+    73/180: Transferred file 1
+    74/180: Transferred file 2
+    75/180: Transferred file 5
+    76/180: Transferred file 6
+    77/180: Transferred file 9
+    78/180: Transferred file 14
+    79/180: Transferred file 15
+    80/180: Transferred file 18
+    81/180: Transferred file 27
+    82/180: Transferred file 30
+    83/180: Transferred file 33
+    84/180: Transferred file 35
+
+henri.lamarre@mail.mcgill.ca requesting 12 files per target at 75 degrees:
+  Tungsten
+    85/180: Transferred file 0
+    86/180: Transferred file 2
+    87/180: Transferred file 3
+    88/180: Transferred file 4
+    89/180: Transferred file 12
+    90/180: Transferred file 14
+    91/180: Transferred file 18
+    92/180: Transferred file 19
+    93/180: Transferred file 22
+    94/180: Transferred file 24
+    95/180: Transferred file 28
+    96/180: Transferred file 31
+  No Scatterer (Before)
+    97/180: Transferred file 8
+    98/180: Transferred file 10
+    99/180: Transferred file 11
+    100/180: Transferred file 16
+    101/180: Transferred file 17
+    102/180: Transferred file 18
+    103/180: Transferred file 19
+    104/180: Transferred file 21
+    105/180: Transferred file 28
+    106/180: Transferred file 30
+    107/180: Transferred file 31
+    108/180: Transferred file 33
+
+henri.lamarre@mail.mcgill.ca requesting 12 files per target at 95 degrees:
+  Tungsten
+    109/180: Transferred file 0
+    110/180: Transferred file 1
+    111/180: Transferred file 5
+    112/180: Transferred file 6
+    113/180: Transferred file 12
+    114/180: Transferred file 19
+    115/180: Transferred file 21
+    116/180: Transferred file 27
+    117/180: Transferred file 28
+    118/180: Transferred file 34
+    119/180: Transferred file 37
+    120/180: Transferred file 39
+  No Scatterer (Before)
+    121/180: Transferred file 1
+    122/180: Transferred file 4
+    123/180: Transferred file 5
+    124/180: Transferred file 6
+    125/180: Transferred file 8
+    126/180: Transferred file 16
+    127/180: Transferred file 17
+    128/180: Transferred file 23
+    129/180: Transferred file 27
+    130/180: Transferred file 34
+    131/180: Transferred file 38
+    132/180: Transferred file 39
+
+henri.lamarre@mail.mcgill.ca requesting 12 files per target at 105 degrees:
+  Tungsten
+    133/180: Transferred file 8
+    134/180: Transferred file 10
+    135/180: Transferred file 13
+    136/180: Transferred file 15
+    137/180: Transferred file 19
+    138/180: Transferred file 22
+    139/180: Transferred file 23
+    140/180: Transferred file 24
+    141/180: Transferred file 27
+    142/180: Transferred file 29
+    143/180: Transferred file 30
+    144/180: Transferred file 36
+  No Scatterer (Before)
+    145/180: Transferred file 14
+    146/180: Transferred file 16
+    147/180: Transferred file 17
+    148/180: Transferred file 21
+    149/180: Transferred file 23
+    150/180: Transferred file 28
+    151/180: Transferred file 30
+    152/180: Transferred file 31
+    153/180: Transferred file 32
+    154/180: Transferred file 34
+    155/180: Transferred file 37
+    156/180: Transferred file 39
+
+henri.lamarre@mail.mcgill.ca requesting 12 files per target at 220 degrees:
+  Tungsten
+    157/180: Transferred file 0
+    158/180: Transferred file 2
+    159/180: Transferred file 8
+    160/180: Transferred file 12
+    161/180: Transferred file 14
+    162/180: Transferred file 15
+    163/180: Transferred file 25
+    164/180: Transferred file 30
+    165/180: Transferred file 31
+    166/180: Transferred file 33
+    167/180: Transferred file 36
+    168/180: Transferred file 38
+  No Scatterer (Before)
+    169/180: Transferred file 0
+    170/180: Transferred file 2
+    171/180: Transferred file 5
+    172/180: Transferred file 6
+    173/180: Transferred file 9
+    174/180: Transferred file 10
+    175/180: Transferred file 14
+    176/180: Transferred file 17
+    177/180: Transferred file 24
+    178/180: Transferred file 26
+    179/180: Transferred file 35
+    180/180: Transferred file 39

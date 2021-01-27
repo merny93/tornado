@@ -24,4 +24,4 @@ def replace(parent):
             os.rename(os.path.join(path, folders[i]), os.path.join(path, new_name))
             folders[i] = new_name
             
-replace('../data')
+replace('../2021-01-25 henri.lamarre@mail.mcgill.ca')
