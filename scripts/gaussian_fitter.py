@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from scipy.special import erfc
 from matplotlib import rc
+import os
 
 
 def collapse_data(data_list):
@@ -69,7 +70,7 @@ def plotter(num, key, guess_mean, guess_width = 2, guess_height=1, plot = True):
         plt.savefig('../figures/{}_gaussian.png'.format(key))
         # plt.show()
         plt.close()
-    print(popt, uncertainty)
+    # print(popt, uncertainty)
     return [popt[0], uncertainty[1]]
 
 def reverse_line(x,a,b):
@@ -116,6 +117,7 @@ def line_fit(points_y, litterature, plot = True):
         plt.xlabel('Energy (keV)')
         plt.tight_layout()
         plt.savefig('../figures/line.png')
+    print(popt, uncertainty)
     return popt, uncertainty
 
 def calibrator_fit(data):
@@ -134,7 +136,7 @@ def calibrator_fit(data):
 if __name__ == "__main__":
     elements = {}
     for element in ft.SOURCE_NAMES:
-        elements[element] = ft.get_data("../data/calibration", source_name = element)
+        elements[element] = ft.get_data(os.path.join("../data/tungsten/Angles/55/00_Other_Sources", element))
     line_points = []
     line_points.append(plotter([1200,1450], 'Na-22', guess_mean = 1360))
     line_points.append(plotter([900,1050], 'Ba-133', guess_mean = 970))
