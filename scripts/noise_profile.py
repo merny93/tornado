@@ -19,7 +19,10 @@ def fitter(sup_path, plot = True):
     x = np.linspace(220,2047,2048-220)
     uncert = np.sqrt(data)
     print(data)
-    res = curve_fit(polynome, x, data, p0 = [1,1,1,1,1,1,1,1,1,1,1,1,1,1]) 
+    res = curve_fit(polynome, x, data, p0 = [-3.20194279e+00,-3.38704699e-02,1.48655540e-02,-1.15786819e-04,
+                                            3.68163557e-07, -5.20736574e-10,  1.64862236e-14,  1.13040755e-15,
+                                            -1.95524233e-18,  1.75095304e-21, -9.49046487e-25,  3.13656100e-28,
+                                            -5.83843311e-32,  4.70517366e-36]) 
     popt = res[0]
     uncertainty = np.sqrt(np.diag(res[1]))
     print(popt, uncertainty)
