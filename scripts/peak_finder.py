@@ -10,25 +10,26 @@ def peak_finder(sup_path, bins, plot = True):
     '''
     Loads rod data from specified path, substracts the noise profile and plot.
     '''
-    data = gf.collapse_data(ft.get_data(path.join(sup_path, "02_Tungsten")))[bins[0]:bins[1]]
-    x = np.linspace(0,2047,2048)[bins[0]:bins[1]]
-    noise_coefs = nsp.fitter(path.join(sup_path), plot = False)
-    noise = nsp.polynome(x, *noise_coefs)
+    data = gf.collapse_data(ft.get_data(path.join(sup_path, "02_Tungsten")))
+    x = np.linspace(0,2047,2048)
+    noise = nsp.fitter(path.join(sup_path), plot = True)
     # NOISE UNCERTAINTY
     data_corrected = data - noise
-    new_x = x[(data_corrected > 0)]
-    data_corrected = data_corrected[(data_corrected > 0)]
-    data_uncertainty = np.sqrt(data_corrected)
-    res = curve_fit(gf.total_fit, new_x, data_corrected, 
+    data_corrected_window = data_corrected[bins[0]:bins[1]]
+    x_window = x[bins[0]:bins[1]]
+    new_x = x_window[(data_corrected_window > 1)]
+    data_final = data_corrected_window[(data_corrected_window > 1)]
+    data_uncertainty = np.sqrt(data_final)
+    res = curve_fit(gf.total_fit, new_x, data_final, 
             p0 = [np.mean(bins), 10, 100, 10, 1, 1], sigma = data_uncertainty, bounds = (0,1e5))
     popt = res[0]
     unc = np.sqrt(np.diag(res[1]))
     
     if plot: 
         plt.figure()
-        plt.scatter(new_x,data_corrected, marker = '.', alpha = 1)
+        plt.scatter(x,data_corrected, marker = '.', alpha = 1)
         plt.plot(x, gf.total_fit(x, *popt))
-        plt.xlim(bins[0],bins[1])
+        # plt.xlim(bins[0],bins[1])
         # plt.show()
         plt.savefig(path.join(sup_path + 'gaussian.png'))
     return popt, unc

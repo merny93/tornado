@@ -16,7 +16,7 @@ def mass_electron(peak_location, a, b, theta):
     
     Ei = ufloat(661.657e3*con.e, 0.003*con.e) # 661.6 keV converted to Joules
     
-    Ef = (a*peak_location + b )*10**3*con.e #if these numbers are wrong thats linda fault
+    Ef = (a*peak_location + b)*10**3*con.e #if these numbers are wrong thats linda fault
     
     mass = (1/con.c**2) * 1/( 1/Ef - 1/Ei ) * ( 1 - cos( theta*np.pi/180) )
     
@@ -31,10 +31,10 @@ if __name__ == '__main__':
         a = ufloat(coef[0], unc[0])
         b = ufloat(coef[1], unc[1])
         mass = []
-        if peaks_data["angles"][i] == 220:
-            print("LOLZZZ")
-            continue
+        
         mass.append(mass_electron(ufloat(peaks_data['peaks'][i], peaks_data['uncertainty'][i]), a, b, ufloat(peaks_data['angles'][i], 0.1) ))
+        print(i)
+        print(len(mass))
         print('theta = {} deg -> mass = {} kg'.format( peaks_data['angles'][i], mass[i] ))
         
     print('Average is given by: ', np.average([x.nominal_value for x in mass], weights = [x.std_dev for x in mass]), "pm", 1/np.sqrt(np.sum([x.std_dev for x in mass])))
