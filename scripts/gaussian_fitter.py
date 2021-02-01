@@ -120,26 +120,28 @@ def line_fit(points_y, litterature, plot = True):
     print(popt, uncertainty)
     return popt, uncertainty
 
-def calibrator_fit(data):
-    '''
-    Performs a calibration on a data set of size (4x2x2048)
-    and returns the parameters a,b of the line fit and their uncertainties
-    '''
-    line_points = [plotter(data, [1200,1450], 'Na-22', 1360), 
-                   plotter(data, [900,1050], 'Ba-133', 970),
-                   plotter(data, [1550,1910], 'Cs-137', 1742, guess_width = 58, guess_height=77),
-                   plotter(data, [315,380], 'Co-57', 350,  guess_width = 2, guess_height=1600)]
-    [params,unc] = line_fit(np.array(line_points), [[511.0, 356.0129, 661.657, 122.06065],[5, 7, 3, 12]])
+# def calibrator_fit(data):
+#     '''
+#     Performs a calibration on a data set of size (4x2x2048)
+#     and returns the parameters a,b of the line fit and their uncertainties
+#     '''
+#     line_points = [plotter(data, [1200,1450], 'Na-22', 1360), 
+#                    plotter(data, [900,1050], 'Ba-133', 970),
+#                    plotter(data, [1550,1910], 'Cs-137', 1742, guess_width = 58, guess_height=77),
+#                    plotter(data, [315,380], 'Co-57', 350,  guess_width = 2, guess_height=1600)]
+#     [params,unc] = line_fit(np.array(line_points), [[511.0, 356.0129, 661.657, 122.06065],[5, 7, 3, 12]])
 
-    return params, unc
+#     return params, unc
 
 if __name__ == "__main__":
     elements = {}
-    for element in ft.SOURCE_NAMES:
-        elements[element] = ft.get_data(os.path.join("../data/tungsten/Angles/55/00_Other_Sources", element))
-    line_points = []
-    line_points.append(plotter([1200,1450], 'Na-22', guess_mean = 1360))
-    line_points.append(plotter([900,1050], 'Ba-133', guess_mean = 970))
-    line_points.append(plotter([1550,1910], 'Cs-137', 1742, guess_width = 58, guess_height=77))
-    line_points.append(plotter([315,380], 'Co-57', 350,  guess_width = 2, guess_height=1600))
-    line_fit(np.array(line_points), [[511.0, 356.0129, 661.657, 122.06065],[5, 7, 3, 12]]) 
+    for angle in [105]: # [55,75,95,105,220]:
+        for element in ft.SOURCE_NAMES:
+            elements[element] = ft.get_data(os.path.join("../data/tungsten/Angles/{}/00_Other_Sources".format(angle), element))
+        line_points = []
+        # line_points.append(plotter([1200,1450], 'Na-22', guess_mean = 1360))
+        # line_points.append(plotter([900,1050], 'Ba-133', guess_mean = 970))
+        line_points.append(plotter([1550,1910], 'Cs-137', 1742, guess_width = 58, guess_height=77), plot = True)
+        # line_points.append(plotter([315,380], 'Co-57', 350,  guess_width = 2, guess_height=1600))
+        [a,b], [a_u,b_u] = line_fit(np.array(line_points), [[511.0, 356.0129, 661.657, 122.06065],[5, 7, 3, 12]]) 
+        np.savez("../data/tungsten/Angles/{}/line_coefs.npz".format(angle), coefs = [a,b], unc = [a_u, b_u])

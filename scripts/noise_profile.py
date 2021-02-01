@@ -16,6 +16,13 @@ def fitter(sup_path, plot = True):
     and returns the parameters a,b of the line fit and their uncertainties
     '''
     data = gf.collapse_data(ft.get_data(path.join(sup_path, "01_No_Scatterer")))[220:]
+    
+    padded_noise = np.pad(calib_noise,(window//2, window//2), mode="edge")
+    array_view = np.lib.stride_tricks.as_strided(padded_noise, shape=(calib_noise.size,window), strides=[padded_noise.strides[0] for i in range(2)])
+    noise_model =np.mean(array_view, axis=-1)
+    noise_model = np.maximum(np.ones(noise_model.size), noise_model)
+    noise_model = np.sqrt(noise_model)
+    print(np.min(noise_model))
     x = np.linspace(220,2047,2048-220)
     uncert = np.sqrt(data)
     print(data)

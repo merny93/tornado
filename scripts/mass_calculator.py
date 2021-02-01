@@ -1,5 +1,7 @@
 import numpy as np
-
+from uncertainties import ufloat
+from uncertainties.umath import cos, sqrt
+from scipy import constants as con
 
 def mass_electron(peak_location, a, b, theta):
     '''
@@ -11,25 +13,28 @@ def mass_electron(peak_location, a, b, theta):
     where c = 3*10^8 m/s, E_i = 661.6 keV (energy of the source) and theta is in rad.
     '''
     
-    c = 3e8
-    Ei = 661.6e3*1.602e-19 # 661.6 keV converted to Joules
     
-    Ef = ( a*peak_location + b )*10**3*1.602e-19
+    Ei = ufloat(661.657e3*con.e, 0.003*con.e) # 661.6 keV converted to Joules
     
-    mass = (1/c**2) * 1/( 1/Ef - 1/Ei ) * ( 1 - np.cos( theta*np.pi/180) )
+    Ef = (a*peak_location + b )*10**3*con.e #if these numbers are wrong thats linda fault
+    
+    mass = (1/con.c**2) * 1/( 1/Ef - 1/Ei ) * ( 1 - cos( theta*np.pi/180) )
     
     return mass
     
-    
-peaks_data = np.load('../data/tungsten/Angles/peaks.npz')
-a = 0.3856 
-b = -14.9
 
-mass = []
-for i in range(len(peaks_data['angles'])):
-    mass.append( mass_electron(peaks_data['peaks'][i], a, b, peaks_data['angles'][i]) )
-    print('theta = {} deg -> mass = {} kg'.format( peaks_data['angles'][i], round(mass[i], 35) ))
-    
-print('Standard deviation of masses = ', round(np.std(mass), 35) )
-
-    
+if __name__ == '__main__':
+    peaks_data = np.load('../data/tungsten/Angles/peaks.npz')
+    for i in range(len(peaks_data['angles'])):
+        line_data = np.load("../data/tungsten/Angles/{}/line_coefs.npz".format(peaks_data['angles'][i]))
+        coef, unc = line_data['coefs'], line_data['unc']
+        a = ufloat(coef[0], unc[0])
+        b = ufloat(coef[1], unc[1])
+        mass = []
+        if peaks_data["angles"][i] == 220:
+            print("LOLZZZ")
+            continue
+        mass.append(mass_electron(ufloat(peaks_data['peaks'][i], peaks_data['uncertainty'][i]), a, b, ufloat(peaks_data['angles'][i], 0.1) ))
+        print('theta = {} deg -> mass = {} kg'.format( peaks_data['angles'][i], mass[i] ))
+        
+    print('Average is given by: ', np.average([x.nominal_value for x in mass], weights = [x.std_dev for x in mass]), "pm", 1/np.sqrt(np.sum([x.std_dev for x in mass])))
