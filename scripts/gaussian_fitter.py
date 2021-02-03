@@ -55,24 +55,27 @@ def plotter(num, key, guess_mean, guess_width = 2, guess_height=1, plot = True):
         max[0], max[2], min[0], min[2] = popt[0], popt[2], popt[0], popt[2]
         axs[0].plot(x, total_fit(x, *max), color = 'orange',linestyle = '--')
         axs[0].plot(x, total_fit(x, *min), color = 'orange',linestyle = '--')
-        axs[0].errorbar(x, y, yerr = uncert, linestyle = "None")
+        axs[0].errorbar(x, y, yerr = uncert, linestyle = "None",capsize=0)
         axs[0].set_ylabel('Counts')
-        axs[0].legend()
+        axs[0].set_yticks([0,100])
+        axs[0].legend(fontsize=14)
 
         #residual plot
         axs[1].scatter(x, y-total_fit(x, *popt), marker = '.')
-        axs[1].errorbar(x, y-total_fit(x, *popt), yerr = uncert, linestyle = "None")
+        axs[1].errorbar(x, y-total_fit(x, *popt), yerr = uncert, linestyle = "None",capsize=0)
         axs[1].set_ylabel('Residuals') #, position = (0,0))
         plt.xlabel('Channel number')
         axs[1].plot(x,np.zeros(len(x)), color='grey', linestyle = '--')
         axs[1].fill_between(x, total_fit(x, *popt)-total_fit(x, *max), total_fit(x, *popt)-total_fit(x, *min), color = 'orange', alpha = 0.5)
+        axs[1].set_yticks([-20,0,20])
         plt.subplots_adjust(wspace=0, hspace=0)
         plt.tight_layout()
+        plt.xlim(num[0],num[1])
         plt.savefig('../figures/{}_gaussian.png'.format(key))
         # plt.show()
         plt.close()
     # print(popt, uncertainty)
-    return [popt[0], uncertainty[1]]
+    return [popt[0], uncertainty[0]]
 
 def reverse_line(x,a,b):
     return (x-b)/a
@@ -80,7 +83,7 @@ def reverse_line(x,a,b):
 def line(x,a,b):
     return a*x+b
 
-def line_fit(points_y, litterature, plot = True):
+def line_fit(points_y, litterature, angle, plot = True):
     '''
     Takes in
     points_y: calibration data and uncertainty
@@ -93,31 +96,37 @@ def line_fit(points_y, litterature, plot = True):
     chi_sqd = np.sum((points_y[:,0]-reverse_line(litterature[0], *popt))**2/points_y[:,1])
     if plot:
         # plot the line
+        plt.clf()
+        plt.rcParams.update({'font.size': 18})
         fig, axs = plt.subplots(2,1, sharex=True, sharey=False, gridspec_kw = {'height_ratios': [3,1],'wspace':0, 'hspace':0})
 
         max = uncertainty + popt
         min = -uncertainty + popt
         axs[0].scatter(litterature[0], points_y[:,0],marker = '.', label = 'data')
-        axs[0].errorbar(litterature[0],points_y[:,0],  yerr = points_y[:,1], linestyle = "None")
+        axs[0].errorbar(litterature[0],points_y[:,0],  yerr = points_y[:,1], linestyle = "None",capsize=0)
+        print(points_y[:,1])
         axs[0].plot(line(points_y[:,0], *popt), points_y[:,0], color = 'orange', label = 'Linear Fit')
         axs[0].set_ylabel('Channel Number')
-        n = ['Ba-133','Co-57','Na-22', 'Cs-137']
+        axs[0].set_yticks([600,1200,1800])
+        n = ['Ba-133','Co-57','Cs-137','Na-22']
         positions = [(litterature[0][1]+10, points_y[:,0][1]-50),(litterature[0][3]+20,points_y[:,0][3]-30),
-                     (litterature[0][2]-20, points_y[:,0][2]-100),(litterature[0][0], points_y[:,0][0]-50)]
+                     (litterature[0][2]-40, points_y[:,0][2]-100),(litterature[0][0], points_y[:,0][0]-50)]
         for i, txt in enumerate(n):
-            axs[0].annotate(txt, positions[i], fontsize=10)
-        axs[0].legend()
+            axs[0].annotate(txt, positions[i], fontsize=14)
+        axs[0].legend(loc = 'upper left', fontsize = 14)
         #plot the residuals
         linspace = np.linspace(np.min(litterature[0]),np.max(litterature[0]),1000)
         axs[1].scatter(litterature[0],points_y[:,0]-reverse_line(litterature[0], *popt),  marker = '.')
-        axs[1].errorbar(litterature[0],points_y[:,0]-reverse_line(litterature[0], *popt),  yerr = points_y[:,1], linestyle = "None")
+        axs[1].errorbar(litterature[0],points_y[:,0]-reverse_line(litterature[0], *popt),  yerr = points_y[:,1], linestyle = "None",capsize=0)
         axs[1].fill_between(linspace, reverse_line(linspace, *popt)-reverse_line(linspace, *max),
                              reverse_line(linspace, *popt)-reverse_line(linspace, *min), color = 'orange', alpha = 0.5)
         axs[1].plot(linspace,np.zeros(len(linspace)), color='grey', linestyle = '--')
+        axs[1].set_yticks([-10,0,10])
         axs[1].set_ylabel('Residuals')
+        plt.xlim(100,700)
         plt.xlabel('Energy (keV)')
         plt.tight_layout()
-        plt.savefig('../figures/line.png')
+        plt.savefig('../data/tungsten/Angles/{}/line.png'.format(angle))
     print(popt, uncertainty)
     return popt, uncertainty
 
@@ -140,9 +149,9 @@ if __name__ == "__main__":
         for element in ft.SOURCE_NAMES:
             elements[element] = ft.get_data(os.path.join("../data/tungsten/Angles/{}/00_Other_Sources".format(angle), element))
         line_points = []
-        line_points.append(plotter([1200,1450], 'Na-22', guess_mean = 1360))
-        line_points.append(plotter([900,1050], 'Ba-133', guess_mean = 970))
-        line_points.append(plotter([1550,1910], 'Cs-137', 1742, guess_width = 58, guess_height=77))
+        line_points.append(plotter([1200,1500], 'Na-22', guess_mean = 1360))
+        line_points.append(plotter([900,1100], 'Ba-133', guess_mean = 970))
+        line_points.append(plotter([1500,2000], 'Cs-137', 1742, guess_width = 58, guess_height=77))
         line_points.append(plotter([315,380], 'Co-57', 350,  guess_width = 2, guess_height=1600))
-        [a,b], [a_u,b_u] = line_fit(np.array(line_points), [[511.0, 356.0129, 661.657, 122.06065],[5, 7, 3, 12]]) 
+        [a,b], [a_u,b_u] = line_fit(np.array(line_points), [[511.0, 356.0129, 661.657, 122.06065],[5, 7, 3, 12]], angle) 
         np.savez("../data/tungsten/Angles/{}/line_coefs.npz".format(angle), coefs = [a,b], unc = [a_u, b_u])
