@@ -13,11 +13,11 @@ def collapse_data(data_list):
     return reduce(lambda x,y: x+y["Counts"], data_list, np.zeros_like(data_list[0]["Counts"]))
 
 
-def total_fit(x,mean,sigma,beta,a0,a1,a2):
+def total_fit(x,mean,sigma,a0,a2):
     gaus = a0*np.exp(-(x - mean)**2/(2*sigma**2))
-    expo = a1*np.exp((x-mean)/beta)*erfc((x-mean)/(np.sqrt(2)*sigma)+sigma/(np.sqrt(2)*beta))
+    # expo = a1*np.exp((x-mean)/beta)*erfc((x-mean)/(np.sqrt(2)*sigma)+sigma/(np.sqrt(2)*beta))
     step = a2*erfc((x-mean)/(np.sqrt(2)*sigma))
-    return gaus + expo + step
+    return gaus+ step
 
 def plotter(num, key, guess_mean, guess_width = 2, guess_height=1, plot = True):
     '''
@@ -29,9 +29,10 @@ def plotter(num, key, guess_mean, guess_width = 2, guess_height=1, plot = True):
     '''
     x = np.linspace(0,2047,2048)[num[0]:num[1]] # channel numbers
     y = collapse_data(elements[key])[num[0]:num[1]] # counts
+    y[(y<1)] = 1
     uncert = np.sqrt(y) # uncertainty of counting
     #fit the gaussian
-    res = curve_fit(total_fit, x, y, p0 = [guess_mean, guess_width, 100,guess_height,1,1], sigma = uncert, bounds = (0,1e5)) 
+    res = curve_fit(total_fit, x, y, p0 = [guess_mean, guess_width, guess_height,1], sigma = uncert, bounds = (0,1e5)) 
     # recover the parameter values
     popt = res[0]
     # The uncertainty of the fit
@@ -135,13 +136,13 @@ def line_fit(points_y, litterature, plot = True):
 
 if __name__ == "__main__":
     elements = {}
-    for angle in [105]: # [55,75,95,105,220]:
+    for angle in [55,75,95,105,220]:
         for element in ft.SOURCE_NAMES:
             elements[element] = ft.get_data(os.path.join("../data/tungsten/Angles/{}/00_Other_Sources".format(angle), element))
         line_points = []
-        # line_points.append(plotter([1200,1450], 'Na-22', guess_mean = 1360))
-        # line_points.append(plotter([900,1050], 'Ba-133', guess_mean = 970))
-        line_points.append(plotter([1550,1910], 'Cs-137', 1742, guess_width = 58, guess_height=77), plot = True)
-        # line_points.append(plotter([315,380], 'Co-57', 350,  guess_width = 2, guess_height=1600))
+        line_points.append(plotter([1200,1450], 'Na-22', guess_mean = 1360))
+        line_points.append(plotter([900,1050], 'Ba-133', guess_mean = 970))
+        line_points.append(plotter([1550,1910], 'Cs-137', 1742, guess_width = 58, guess_height=77))
+        line_points.append(plotter([315,380], 'Co-57', 350,  guess_width = 2, guess_height=1600))
         [a,b], [a_u,b_u] = line_fit(np.array(line_points), [[511.0, 356.0129, 661.657, 122.06065],[5, 7, 3, 12]]) 
         np.savez("../data/tungsten/Angles/{}/line_coefs.npz".format(angle), coefs = [a,b], unc = [a_u, b_u])

@@ -1,0 +1,135 @@
+
+henri.lamarre@mail.mcgill.ca requesting 24 files per target at 55 degrees:
+  Tungsten
+    181/300: Transferred file 0
+    182/300: Transferred file 1
+    183/300: Transferred file 2
+    184/300: Transferred file 3
+    185/300: Transferred file 5
+    186/300: Transferred file 9
+    187/300: Transferred file 10
+    188/300: Transferred file 12
+    189/300: Transferred file 13
+    190/300: Transferred file 14
+    191/300: Transferred file 15
+    192/300: Transferred file 18
+    193/300: Transferred file 19
+    194/300: Transferred file 21
+    195/300: Transferred file 25
+    196/300: Transferred file 26
+    197/300: Transferred file 27
+    198/300: Transferred file 28
+    199/300: Transferred file 31
+    200/300: Transferred file 32
+    201/300: Transferred file 35
+    202/300: Transferred file 36
+    203/300: Transferred file 37
+    204/300: Transferred file 39
+
+henri.lamarre@mail.mcgill.ca requesting 24 files per target at 75 degrees:
+  Tungsten
+    205/300: Transferred file 1
+    206/300: Transferred file 2
+    207/300: Transferred file 3
+    208/300: Transferred file 4
+    209/300: Transferred file 5
+    210/300: Transferred file 6
+    211/300: Transferred file 8
+    212/300: Transferred file 10
+    213/300: Transferred file 11
+    214/300: Transferred file 14
+    215/300: Transferred file 15
+    216/300: Transferred file 18
+    217/300: Transferred file 20
+    218/300: Transferred file 22
+    219/300: Transferred file 24
+    220/300: Transferred file 26
+    221/300: Transferred file 27
+    222/300: Transferred file 28
+    223/300: Transferred file 31
+    224/300: Transferred file 32
+    225/300: Transferred file 34
+    226/300: Transferred file 35
+    227/300: Transferred file 37
+    228/300: Transferred file 39
+
+henri.lamarre@mail.mcgill.ca requesting 24 files per target at 95 degrees:
+  Tungsten
+    229/300: Transferred file 3
+    230/300: Transferred file 5
+    231/300: Transferred file 6
+    232/300: Transferred file 8
+    233/300: Transferred file 9
+    234/300: Transferred file 10
+    235/300: Transferred file 11
+    236/300: Transferred file 12
+    237/300: Transferred file 14
+    238/300: Transferred file 16
+    239/300: Transferred file 17
+    240/300: Transferred file 20
+    241/300: Transferred file 21
+    242/300: Transferred file 22
+    243/300: Transferred file 23
+    244/300: Transferred file 24
+    245/300: Transferred file 28
+    246/300: Transferred file 30
+    247/300: Transferred file 33
+    248/300: Transferred file 34
+    249/300: Transferred file 35
+    250/300: Transferred file 36
+    251/300: Transferred file 37
+    252/300: Transferred file 39
+
+henri.lamarre@mail.mcgill.ca requesting 24 files per target at 105 degrees:
+  Tungsten
+    253/300: Transferred file 3
+    254/300: Transferred file 5
+    255/300: Transferred file 6
+    256/300: Transferred file 7
+    257/300: Transferred file 8
+    258/300: Transferred file 9
+    259/300: Transferred file 11
+    260/300: Transferred file 12
+    261/300: Transferred file 14
+    262/300: Transferred file 15
+    263/300: Transferred file 16
+    264/300: Transferred file 18
+    265/300: Transferred file 19
+    266/300: Transferred file 20
+    267/300: Transferred file 23
+    268/300: Transferred file 25
+    269/300: Transferred file 28
+    270/300: Transferred file 29
+    271/300: Transferred file 31
+    272/300: Transferred file 32
+    273/300: Transferred file 33
+    274/300: Transferred file 35
+    275/300: Transferred file 37
+    276/300: Transferred file 39
+
+henri.lamarre@mail.mcgill.ca requesting 24 files per target at 220 degrees:
+  Tungsten
+    277/300: Transferred file 1
+    278/300: Transferred file 2
+    279/300: Transferred file 3
+    280/300: Transferred file 5
+    281/300: Transferred file 7
+    282/300: Transferred file 8
+    283/300: Transferred file 11
+    284/300: Transferred file 13
+    285/300: Transferred file 15
+    286/300: Transferred file 16
+    287/300: Transferred file 17
+    288/300: Transferred file 20
+    289/300: Transferred file 21
+    290/300: Transferred file 22
+    291/300: Transferred file 23
+    292/300: Transferred file 24
+    293/300: Transferred file 25
+    294/300: Transferred file 26
+    295/300: Transferred file 28
+    296/300: Transferred file 29
+    297/300: Transferred file 30
+    298/300: Transferred file 31
+    299/300: Transferred file 37
+    300/300: Transferred file 39

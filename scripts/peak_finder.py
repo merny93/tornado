@@ -5,6 +5,8 @@ from os import path
 import numpy as np 
 import matplotlib.pyplot as plt 
 from scipy.optimize import curve_fit 
+from scipy.interpolate import interp1d
+
 
 def peak_finder(sup_path, bins, plot = True):
     '''
@@ -12,24 +14,27 @@ def peak_finder(sup_path, bins, plot = True):
     '''
     data = gf.collapse_data(ft.get_data(path.join(sup_path, "02_Tungsten")))
     x = np.linspace(0,2047,2048)
-    noise = nsp.fitter(path.join(sup_path), plot = True)
+    background = nsp.fitter(path.join(sup_path), plot = True)
+    corr_data = data-(background*30/12)
+
+    # noise_function = interp1d(x, noise)
+
+    # def denoised_gaus(x_,mean,sigma,a0,a2):
+    #     return gf.total_fit(x_,mean,sigma,a0,a2)# + a3*noise_function(x_)
+    
     # NOISE UNCERTAINTY
-    data_corrected = data - noise
-    data_corrected_window = data_corrected[bins[0]:bins[1]]
-    x_window = x[bins[0]:bins[1]]
-    new_x = x_window[(data_corrected_window > 1)]
-    data_final = data_corrected_window[(data_corrected_window > 1)]
-    data_uncertainty = np.sqrt(data_final)
-    res = curve_fit(gf.total_fit, new_x, data_final, 
-            p0 = [np.mean(bins), 10, 100, 10, 1, 1], sigma = data_uncertainty, bounds = (0,1e5))
+    res = curve_fit(gf.total_fit, x[bins[0]:bins[1]], corr_data[bins[0]:bins[1]], 
+            p0 = [np.mean(bins), 10, 10, 1], sigma = np.sqrt(data[bins[0]:bins[1]] + 30/12*background[bins[0]:bins[1]]), bounds = (0,1e5))
     popt = res[0]
     unc = np.sqrt(np.diag(res[1]))
     
     if plot: 
         plt.figure()
-        plt.scatter(x,data_corrected, marker = '.', alpha = 1)
+        plt.scatter(x, corr_data, marker = '.', alpha = 1)
         plt.plot(x, gf.total_fit(x, *popt))
-        # plt.xlim(bins[0],bins[1])
+        plt.ylim(0,180)
+        # plt.ylim(min(data[bins[0]:bins[1]]), max(data[bins[0]:bins[1]]))
+        plt.xlim(bins[0],bins[1])
         # plt.show()
         plt.savefig(path.join(sup_path + 'gaussian.png'))
     return popt, unc
