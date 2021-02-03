@@ -29,14 +29,44 @@ def peak_finder(sup_path, bins, plot = True):
     unc = np.sqrt(np.diag(res[1]))
     
     if plot: 
-        plt.figure()
-        plt.scatter(x, corr_data, marker = '.', alpha = 1)
-        plt.plot(x, gf.total_fit(x, *popt))
-        plt.ylim(0,180)
-        # plt.ylim(min(data[bins[0]:bins[1]]), max(data[bins[0]:bins[1]]))
+        plt.clf()
+        plt.rcParams.update({'font.size': 18})
+        fig, axs = plt.subplots(2, sharex=True, sharey=False, gridspec_kw = {'height_ratios': [3,1],'wspace':0, 'hspace':0})
+
+        # plt.ylim(0,180)
         plt.xlim(bins[0],bins[1])
-        # plt.show()
+        axs[0].scatter(x, corr_data, marker = '.', label = 'data')
+        axs[0].plot(x, gf.total_fit(x, *popt), color = 'red', label = 'Gaussian fit')
+        max = popt+unc
+        min = np.clip(popt-unc,1e-15,None)
+        max[0], max[2], min[0], min[2] = popt[0], popt[2], popt[0], popt[2]
+        axs[0].plot(x, gf.total_fit(x, *max), color = 'red',linestyle = '--')
+        axs[0].plot(x, gf.total_fit(x, *min), color = 'red',linestyle = '--')
+        axs[0].errorbar(x, corr_data, yerr = np.sqrt(data + 30/12*background), 
+                        linestyle = "None",capsize=0)
+        axs[0].set_ylabel('Counts')
+        axs[0].set_ylim(-20,120)
+        axs[0].set_yticks([0,100])
+        axs[0].legend(fontsize=14)
+
+        #residual plot
+        axs[1].scatter(x, corr_data-gf.total_fit(x, *popt), marker = '.')
+        axs[1].errorbar(x, corr_data-gf.total_fit(x, *popt), yerr = np.sqrt(data + 30/12*background), linestyle = "None",capsize=0)
+        axs[1].set_ylabel('Residuals') #, position = (0,0))
+        plt.xlabel('Channel number')
+        axs[1].plot(x,np.zeros(len(x)), color='grey', linestyle = '--')
+        axs[1].fill_between(x, gf.total_fit(x, *popt)-gf.total_fit(x, *max),
+                             gf.total_fit(x, *popt)-gf.total_fit(x, *min), color = 'red', alpha = 0.5)
+        axs[1].set_yticks([-20,0,20])
+        axs[1].set_ylim(-40,40)
+        plt.subplots_adjust(wspace=0, hspace=0)
+        plt.tight_layout()
+        plt.xlim(bins[0],bins[1])
+
+
         plt.savefig(path.join(sup_path + 'gaussian.png'))
+        # plt.show()
+        plt.close()
     return popt, unc
     
     

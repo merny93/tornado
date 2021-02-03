@@ -49,12 +49,12 @@ def plotter(num, key, guess_mean, guess_width = 2, guess_height=1, plot = True):
 
         # Scatter of the data and gaussian line
         axs[0].scatter(x, y, marker = '.', label = 'data')
-        axs[0].plot(x, total_fit(x, *popt), color = 'orange', label = 'Gaussian fit')
+        axs[0].plot(x, total_fit(x, *popt), color = 'red', label = 'Gaussian fit')
         max = popt+uncertainty
         min = np.clip(popt-uncertainty,1e-15,None)
         max[0], max[2], min[0], min[2] = popt[0], popt[2], popt[0], popt[2]
-        axs[0].plot(x, total_fit(x, *max), color = 'orange',linestyle = '--')
-        axs[0].plot(x, total_fit(x, *min), color = 'orange',linestyle = '--')
+        axs[0].plot(x, total_fit(x, *max), color = 'red',linestyle = '--')
+        axs[0].plot(x, total_fit(x, *min), color = 'red',linestyle = '--')
         axs[0].errorbar(x, y, yerr = uncert, linestyle = "None",capsize=0)
         axs[0].set_ylabel('Counts')
         axs[0].set_yticks([0,100])
@@ -66,7 +66,7 @@ def plotter(num, key, guess_mean, guess_width = 2, guess_height=1, plot = True):
         axs[1].set_ylabel('Residuals') #, position = (0,0))
         plt.xlabel('Channel number')
         axs[1].plot(x,np.zeros(len(x)), color='grey', linestyle = '--')
-        axs[1].fill_between(x, total_fit(x, *popt)-total_fit(x, *max), total_fit(x, *popt)-total_fit(x, *min), color = 'orange', alpha = 0.5)
+        axs[1].fill_between(x, total_fit(x, *popt)-total_fit(x, *max), total_fit(x, *popt)-total_fit(x, *min), color = 'red', alpha = 0.5)
         axs[1].set_yticks([-20,0,20])
         plt.subplots_adjust(wspace=0, hspace=0)
         plt.tight_layout()
@@ -105,7 +105,7 @@ def line_fit(points_y, litterature, angle, plot = True):
         axs[0].scatter(litterature[0], points_y[:,0],marker = '.', label = 'data')
         axs[0].errorbar(litterature[0],points_y[:,0],  yerr = points_y[:,1], linestyle = "None",capsize=0)
         print(points_y[:,1])
-        axs[0].plot(line(points_y[:,0], *popt), points_y[:,0], color = 'orange', label = 'Linear Fit')
+        axs[0].plot(line(points_y[:,0], *popt), points_y[:,0], color = 'red', label = 'Linear Fit')
         axs[0].set_ylabel('Channel Number')
         axs[0].set_yticks([600,1200,1800])
         n = ['Ba-133','Co-57','Cs-137','Na-22']
@@ -119,7 +119,7 @@ def line_fit(points_y, litterature, angle, plot = True):
         axs[1].scatter(litterature[0],points_y[:,0]-reverse_line(litterature[0], *popt),  marker = '.')
         axs[1].errorbar(litterature[0],points_y[:,0]-reverse_line(litterature[0], *popt),  yerr = points_y[:,1], linestyle = "None",capsize=0)
         axs[1].fill_between(linspace, reverse_line(linspace, *popt)-reverse_line(linspace, *max),
-                             reverse_line(linspace, *popt)-reverse_line(linspace, *min), color = 'orange', alpha = 0.5)
+                             reverse_line(linspace, *popt)-reverse_line(linspace, *min), color = 'red', alpha = 0.5)
         axs[1].plot(linspace,np.zeros(len(linspace)), color='grey', linestyle = '--')
         axs[1].set_yticks([-10,0,10])
         axs[1].set_ylabel('Residuals')
