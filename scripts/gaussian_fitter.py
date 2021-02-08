@@ -38,7 +38,7 @@ def plotter(num, key, guess_mean, guess_width = 2, guess_height=1, plot = True):
     # The uncertainty of the fit
     uncertainty = np.sqrt(np.diag(res[1]))
     # Chi Squared
-    chi_sqd = np.sum((y-total_fit(x, *popt))**2/np.sqrt(y))
+    chi_sqd = np.sum((y-total_fit(x, *popt))**2/y)/(len(y)-4)
     # Plotting the fit
     if plot:
         plt.clf() #clear the figure
@@ -66,7 +66,7 @@ def plotter(num, key, guess_mean, guess_width = 2, guess_height=1, plot = True):
         axs[1].set_ylabel('Residuals') #, position = (0,0))
         plt.xlabel('Channel number')
         axs[1].plot(x,np.zeros(len(x)), color='grey', linestyle = '--')
-        axs[1].fill_between(x, total_fit(x, *popt)-total_fit(x, *max), total_fit(x, *popt)-total_fit(x, *min), color = 'red', alpha = 0.5)
+        # axs[1].fill_between(x, total_fit(x, *popt)-total_fit(x, *max), total_fit(x, *popt)-total_fit(x, *min), color = 'red', alpha = 0.5)
         axs[1].set_yticks([-20,0,20])
         plt.subplots_adjust(wspace=0, hspace=0)
         plt.tight_layout()
@@ -74,7 +74,7 @@ def plotter(num, key, guess_mean, guess_width = 2, guess_height=1, plot = True):
         plt.savefig('../figures/{}_gaussian.png'.format(key))
         # plt.show()
         plt.close()
-    # print(popt, uncertainty)
+    # print(chi_sqd)
     return [popt[0], uncertainty[0]]
 
 def reverse_line(x,a,b):
@@ -93,7 +93,7 @@ def line_fit(points_y, litterature, angle, plot = True):
     res = curve_fit(reverse_line, litterature[0], points_y[:,0],  p0 = [0.29, -25], sigma = points_y[:,1])
     popt = res[0]
     uncertainty = np.sqrt(np.diag(res[1]))
-    chi_sqd = np.sum((points_y[:,0]-reverse_line(litterature[0], *popt))**2/points_y[:,1])
+    chi_sqd = np.sum((points_y[:,0]-reverse_line(litterature[0], *popt))**2/points_y[:,1]**2)/(2)
     if plot:
         # plot the line
         plt.clf()
@@ -118,8 +118,8 @@ def line_fit(points_y, litterature, angle, plot = True):
         linspace = np.linspace(np.min(litterature[0]),np.max(litterature[0]),1000)
         axs[1].scatter(litterature[0],points_y[:,0]-reverse_line(litterature[0], *popt),  marker = '.')
         axs[1].errorbar(litterature[0],points_y[:,0]-reverse_line(litterature[0], *popt),  yerr = points_y[:,1], linestyle = "None",capsize=0)
-        axs[1].fill_between(linspace, reverse_line(linspace, *popt)-reverse_line(linspace, *max),
-                             reverse_line(linspace, *popt)-reverse_line(linspace, *min), color = 'red', alpha = 0.5)
+        axs[1].fill_between(linspace, (reverse_line(linspace, *popt)-reverse_line(linspace, *max))/np.sqrt(2),
+                             (reverse_line(linspace, *popt)-reverse_line(linspace, *min))/np.sqrt(2), color = 'red', alpha = 0.5)
         axs[1].plot(linspace,np.zeros(len(linspace)), color='grey', linestyle = '--')
         axs[1].set_yticks([-10,0,10])
         axs[1].set_ylabel('Residuals')
@@ -127,7 +127,7 @@ def line_fit(points_y, litterature, angle, plot = True):
         plt.xlabel('Energy (keV)')
         plt.tight_layout()
         plt.savefig('../data/tungsten/Angles/{}/line.png'.format(angle))
-    print(popt, uncertainty)
+    print(popt, uncertainty, chi_sqd)
     return popt, uncertainty
 
 # def calibrator_fit(data):
