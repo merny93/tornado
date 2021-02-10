@@ -17,7 +17,11 @@ def peak_finder(sup_path, bins, plot = True):
     background = nsp.fitter(path.join(sup_path), plot = False)
     signal_files = len(listdir(path.join(sup_path, "02_Tungsten")))
     background_files = len(listdir(path.join(sup_path, "01_No_Scatterer")))
-    corr_data = data-(background*signal_files/background_files)
+    temp_data = data-(background*signal_files/background_files)
+    absorption = np.load('../data/absorption.npz')['absorption']
+    corr_data = np.zeros(len(temp_data))
+    for i in range(len(temp_data)):
+        corr_data[i] = float(temp_data[i]/absorption[i])
 
     # noise_function = interp1d(x, noise)
 
@@ -71,8 +75,9 @@ def peak_finder(sup_path, bins, plot = True):
         print(chi_sqd)
         print(popt[0], unc[0])
         plt.savefig(path.join(sup_path + 'gaussian.png'))
-        # plt.show()
+        plt.show()
         plt.close()
+        print(popt, unc)
     return popt, unc
     
     

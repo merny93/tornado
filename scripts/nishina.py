@@ -35,19 +35,14 @@ if __name__ == '__main__':
     rates = []
     rates_uncertainties = []
 
-    # Load the absorption effeciency and interpolate it
-    data = ft.csv_generic('../calibration_data/Efficiency.csv')
-    energy = data['Energy']
-    absorption = data['Absorption']
-    print(energy)
-    detector = interp1d(energy, absorption)
 
     for i in range(len(angles)):
         res = pf.peak_finder(path.join('../data', 'tungsten/Angles/{}/'.format(angles[i])), [bins[i][0], bins[i][1]], plot=False)
         a_0 = un.ufloat(res[0][2], res[1][2])
         sigma = un.ufloat(res[0][1],res[1][1])
         total_time = un.ufloat(30,2)*30
-        rate = (a_0*sigma*np.sqrt(2*np.pi)/total_time) / detector(res[0][0])
+        print(res[0][0])
+        rate = (a_0*sigma*np.sqrt(2*np.pi)/total_time)
         rates.append(rate.nominal_value)
         rates_uncertainties.append(rate.std_dev)
     
