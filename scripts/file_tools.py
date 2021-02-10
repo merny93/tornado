@@ -1,5 +1,21 @@
 SOURCE_NAMES = ("Ba-133", "Co-57", "Cs-137", "Na-22")
 
+def csv_generic(fname):
+    res = {}
+    fields = None
+    with open(fname, "r") as csvfile:
+        for line in csvfile.readlines():
+            if fields is None:
+                #init the results
+                fields = line.strip().split(",")
+                res.update(dict(zip(fields, [[] for _ in range(len(fields))])))
+            else:
+                vals = [float(x) for x in line.strip().split(",")]
+                pairs = dict(zip(fields, vals))
+                for key in pairs:
+                    res[key].append(pairs[key])   
+    return res
+
 def _reader(fname):
     print(fname)
     if fname.split(".")[-1]=="Chn":

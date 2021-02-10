@@ -7,6 +7,8 @@ from os import path
 import uncertainties as un
 import scipy.constants as con
 from scipy.optimize import curve_fit
+from scipy.interpolate import interp1d 
+from scipy import integrate
 
 def thomson(theta, a):
     theta = theta*np.pi/180 - np.pi
@@ -22,6 +24,7 @@ def nishina(theta, a):
     k_n = (1+(alpha**2*(1-np.cos(theta))**2)/((1+np.cos(theta)**2)*(1+alpha*(1-np.cos(theta)))))/(1+alpha*(1-np.cos(theta)))**2
     value = a*k_n*thom
     return value
+
     
 
 if __name__ == '__main__':
@@ -31,12 +34,20 @@ if __name__ == '__main__':
     angles = [55,75,95,105,220,135,230,310]
     rates = []
     rates_uncertainties = []
+
+    # Load the absorption effeciency and interpolate it
+    data = ft.csv_generic('../calibration_data/Efficiency.csv')
+    energy = data['Energy']
+    absorption = data['Absorption']
+    print(energy)
+    detector = interp1d(energy, absorption)
+
     for i in range(len(angles)):
         res = pf.peak_finder(path.join('../data', 'tungsten/Angles/{}/'.format(angles[i])), [bins[i][0], bins[i][1]], plot=False)
         a_0 = un.ufloat(res[0][2], res[1][2])
         sigma = un.ufloat(res[0][1],res[1][1])
         total_time = un.ufloat(30,2)*30
-        rate = (a_0*sigma*np.sqrt(2*np.pi)/total_time) 
+        rate = (a_0*sigma*np.sqrt(2*np.pi)/total_time) / detector(res[0][0])
         rates.append(rate.nominal_value)
         rates_uncertainties.append(rate.std_dev)
     

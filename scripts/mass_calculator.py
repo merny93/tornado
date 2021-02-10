@@ -21,6 +21,7 @@ def mass_electron(peak_location, a, b, theta):
     
     mass = ((1/con.c**2) * 1/( 1/Ef - 1/Ei ) * ( 1 - cos( theta*np.pi/180-np.pi) ))*con.c**2/con.e/1e6
     
+    print(1/ (1/Ef - 1/Ei ))
     return mass
     
 
@@ -39,6 +40,7 @@ if __name__ == '__main__':
         temp_mass = mass_electron(ufloat(peaks_data['peaks'][i], peaks_data['uncertainty'][i]), a, b,
                  ufloat(peaks_data['angles'][i], 1.5) )
         temp_mass = dict(zip(["nominal_value", "std_dev"], [temp_mass.nominal_value, temp_mass.std_dev]))
+        # print(peaks_data['uncertainty'][i])
         mass.append(temp_mass) 
         print('theta = {} deg -> mass = {} kg'.format( peaks_data['angles'][i], temp_mass))
 
@@ -55,7 +57,7 @@ if __name__ == '__main__':
     plt.fill_between(np.linspace(0,359,360), np.ones(360)*avg-std,np.ones(360)*avg+std, color = 'red', alpha = 0.3)
     plt.ylim(0.47, 0.56)
     plt.xlim(0,9)
-    plt.legend(['Avg', 'Litt',r'$55^\circ$',r'$75^\circ$',r'$95^\circ$',r'$125^\circ$',
+    plt.legend(['Avg', 'Lit',r'$55^\circ$',r'$75^\circ$',r'$95^\circ$',r'$125^\circ$',
                 r'$220^\circ$',r'$135^\circ$',r'$230^\circ$',r'$310^\circ$'], fontsize = 12, loc='lower left')
     plt.ylabel(r'Mass (MeV/$c^2$)')
     plt.xticks([])

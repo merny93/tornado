@@ -27,12 +27,12 @@ def peak_finder(sup_path, bins, plot = True):
     # NOISE UNCERTAINTY
     res = curve_fit(gf.total_fit, x[bins[0]:bins[1]], corr_data[bins[0]:bins[1]], 
             p0 = [np.mean(bins), 10, 10, 1], sigma = np.sqrt(data[bins[0]:bins[1]] +\
-                30/12*background[bins[0]:bins[1]]), bounds = (0,1e5))
+                signal_files/background_files*background[bins[0]:bins[1]]), bounds = (0,1e5))
     popt = res[0]
     unc = np.sqrt(np.diag(res[1]))
     chi_sqd = np.sum((corr_data[bins[0]:bins[1]]-\
         gf.total_fit(x[bins[0]:bins[1]], *popt))**2/(data[bins[0]:bins[1]] +\
-            30/12*background[bins[0]:bins[1]])) / (len(corr_data[bins[0]:bins[1]]) - 4)
+            signal_files/background_files*background[bins[0]:bins[1]])) / (len(corr_data[bins[0]:bins[1]]) - 4)
     
     if plot: 
         plt.clf()
@@ -47,7 +47,7 @@ def peak_finder(sup_path, bins, plot = True):
         max[0], max[2], min[0], min[2] = popt[0], popt[2], popt[0], popt[2]
         # axs[0].plot(x, gf.total_fit(x, *max), color = 'red',linestyle = '--')
         # axs[0].plot(x, gf.total_fit(x, *min), color = 'red',linestyle = '--')
-        axs[0].errorbar(x, corr_data, yerr = np.sqrt(data + 30/12*background), 
+        axs[0].errorbar(x, corr_data, yerr = np.sqrt(data + signal_files/background_files*background), 
                         linestyle = "None",capsize=0)
         axs[0].set_ylabel('Counts')
         # axs[0].set_ylim(-20,150)
@@ -56,7 +56,7 @@ def peak_finder(sup_path, bins, plot = True):
 
         #residual plot
         axs[1].scatter(x, corr_data-gf.total_fit(x, *popt), marker = '.')
-        axs[1].errorbar(x, corr_data-gf.total_fit(x, *popt), yerr = np.sqrt(data + 30/12*background), linestyle = "None",capsize=0)
+        axs[1].errorbar(x, corr_data-gf.total_fit(x, *popt), yerr = np.sqrt(data + signal_files/background_files*background), linestyle = "None",capsize=0)
         axs[1].set_ylabel('Residuals') #, position = (0,0))
         plt.xlabel('Channel number')
         axs[1].plot(x,np.zeros(len(x)), color='grey', linestyle = '--')
@@ -69,6 +69,7 @@ def peak_finder(sup_path, bins, plot = True):
         # plt.xlim(bins[0],bins[1])
 
         print(chi_sqd)
+        print(popt[0], unc[0])
         plt.savefig(path.join(sup_path + 'gaussian.png'))
         # plt.show()
         plt.close()
