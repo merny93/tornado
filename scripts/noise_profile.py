@@ -35,9 +35,9 @@ def fitter(sup_path, plot = True):
         plt.plot(x, noise_model)
         # plt.xlim(1200,1550)
         # plt.ylim(0,180)
-        plt.savefig(path.join(sup_path + 'background_noise.png'))
+        plt.savefig(path.join(sup_path, 'background_noise.png'))
     # np.savez(path.join(sup_path + 'background_noise.npz'), coefs = popt)
     return calib_noise
 
 if __name__ == '__main__':
-    fitter(path.join('../data/', sys.argv[1]))
+    fitter(path.join('../data', sys.argv[1]))

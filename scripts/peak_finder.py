@@ -1,7 +1,7 @@
 import file_tools as ft
 import noise_profile as nsp
 import gaussian_fitter as gf
-from os import path
+from os import path, listdir
 import numpy as np 
 import matplotlib.pyplot as plt 
 from scipy.optimize import curve_fit 
@@ -15,7 +15,9 @@ def peak_finder(sup_path, bins, plot = True):
     data = gf.collapse_data(ft.get_data(path.join(sup_path, "02_Tungsten")))
     x = np.linspace(0,2047,2048)
     background = nsp.fitter(path.join(sup_path), plot = False)
-    corr_data = data-(background*30/12)
+    signal_files = len(listdir(path.join(sup_path, "02_Tungsten")))
+    background_files = len(listdir(path.join(sup_path, "01_No_Scatterer")))
+    corr_data = data-(background*signal_files/background_files)
 
     # noise_function = interp1d(x, noise)
 
@@ -37,7 +39,6 @@ def peak_finder(sup_path, bins, plot = True):
         plt.rcParams.update({'font.size': 18})
         fig, axs = plt.subplots(2, sharex=True, sharey=False, gridspec_kw = {'height_ratios': [3,1],'wspace':0, 'hspace':0})
 
-        plt.ylim(0,180)
         plt.xlim(bins[0],bins[1])
         axs[0].scatter(x, corr_data, marker = '.', label = 'data')
         axs[0].plot(x, gf.total_fit(x, *popt), color = 'red', label = 'Gaussian fit')
@@ -49,7 +50,7 @@ def peak_finder(sup_path, bins, plot = True):
         axs[0].errorbar(x, corr_data, yerr = np.sqrt(data + 30/12*background), 
                         linestyle = "None",capsize=0)
         axs[0].set_ylabel('Counts')
-        axs[0].set_ylim(-20,150)
+        # axs[0].set_ylim(-20,150)
         axs[0].set_yticks([0,100])
         axs[0].legend(fontsize=14)
 
@@ -79,8 +80,8 @@ def peak_finder(sup_path, bins, plot = True):
 if __name__ == '__main__':
     peaks=[]
     uncertainty = []
-    bins = [[500,700],[600,800],[700,950],[750,1050],[1200,1550]]
-    angles = [55,75,95,105,220]
+    bins = [[500,700],[600,800],[700,950],[750,1050],[1200,1550],[1100,1450],[1100,1350],[540,650]]
+    angles = [55,75,95,105,220,135,230,310]
     for i in range(len(angles)):
         res = peak_finder(path.join('../data', 'tungsten/Angles/{}/'.format(angles[i])), [bins[i][0], bins[i][1]])
         peaks.append(res[0][0])

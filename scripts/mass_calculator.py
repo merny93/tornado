@@ -49,10 +49,14 @@ if __name__ == '__main__':
     # std = np.std([x["nominal_value"] for x in mass])
     std = 1/np.sqrt(np.sum([x["std_dev"]**-2 for x in mass]))
     plt.plot(np.linspace(0,359,360), np.ones(360)*avg, linestyle = '--')
+    plt.plot(np.linspace(0,359,360), 
+            np.ones(360)*con.physical_constants['electron mass energy equivalent in MeV'][0], 
+            linestyle = '--')
     plt.fill_between(np.linspace(0,359,360), np.ones(360)*avg-std,np.ones(360)*avg+std, color = 'red', alpha = 0.3)
     plt.ylim(0.47, 0.56)
-    plt.xlim(0,6)
-    plt.legend(['Avg',r'$55^\circ$',r'$75^\circ$',r'$95^\circ$',r'$125^\circ$',r'$220^\circ$'], fontsize = 12, loc='lower left')
+    plt.xlim(0,9)
+    plt.legend(['Avg', 'Litt',r'$55^\circ$',r'$75^\circ$',r'$95^\circ$',r'$125^\circ$',
+                r'$220^\circ$',r'$135^\circ$',r'$230^\circ$',r'$310^\circ$'], fontsize = 12, loc='lower left')
     plt.ylabel(r'Mass (MeV/$c^2$)')
     plt.xticks([])
     plt.tight_layout()

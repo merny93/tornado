@@ -145,7 +145,7 @@ def line_fit(points_y, litterature, angle, plot = True):
 
 if __name__ == "__main__":
     elements = {}
-    for angle in [55,75,95,105,220]:
+    for angle in [55,75,95,105,220,135,230,310]:
         for element in ft.SOURCE_NAMES:
             elements[element] = ft.get_data(os.path.join("../data/tungsten/Angles/{}/00_Other_Sources".format(angle), element))
         line_points = []
