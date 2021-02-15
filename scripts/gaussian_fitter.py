@@ -118,8 +118,8 @@ def line_fit(points_y, litterature, angle, plot = True):
         linspace = np.linspace(np.min(litterature[0]),np.max(litterature[0]),1000)
         axs[1].scatter(litterature[0],points_y[:,0]-reverse_line(litterature[0], *popt),  marker = '.')
         axs[1].errorbar(litterature[0],points_y[:,0]-reverse_line(litterature[0], *popt),  yerr = points_y[:,1], linestyle = "None",capsize=0)
-        axs[1].fill_between(linspace, (reverse_line(linspace, *popt)-reverse_line(linspace, *max))/np.sqrt(2),
-                             (reverse_line(linspace, *popt)-reverse_line(linspace, *min))/np.sqrt(2), color = 'red', alpha = 0.5)
+        # axs[1].fill_between(linspace, (reverse_line(linspace, *popt)-reverse_line(linspace, *max))/np.sqrt(2),
+        #                      (reverse_line(linspace, *popt)-reverse_line(linspace, *min))/np.sqrt(2), color = 'red', alpha = 0.5)
         axs[1].plot(linspace,np.zeros(len(linspace)), color='grey', linestyle = '--')
         axs[1].set_yticks([-10,0,10])
         axs[1].set_ylabel('Residuals')
@@ -145,7 +145,8 @@ def line_fit(points_y, litterature, angle, plot = True):
 
 if __name__ == "__main__":
     elements = {}
-    for angle in [55,75,95,105,220,135,230,310]:
+    elements2 = {}
+    for angle in [55,75,95,105,220,135,230,310,125,240,250]:
         for element in ft.SOURCE_NAMES:
             elements[element] = ft.get_data(os.path.join("../data/tungsten/Angles/{}/00_Other_Sources".format(angle), element))
         line_points = []
@@ -154,4 +155,5 @@ if __name__ == "__main__":
         line_points.append(plotter([1500,2000], 'Cs-137', 1742, guess_width = 58, guess_height=77))
         line_points.append(plotter([315,380], 'Co-57', 350,  guess_width = 2, guess_height=1600))
         [a,b], [a_u,b_u] = line_fit(np.array(line_points), [[511.0, 356.0129, 661.657, 122.06065],[5, 7, 3, 12]], angle) 
+
         np.savez("../data/tungsten/Angles/{}/line_coefs.npz".format(angle), coefs = [a,b], unc = [a_u, b_u])

@@ -36,6 +36,6 @@ def calibrator(sup_path, plotting = False):
     # return params1,unc1,params2,unc2
 
 if __name__ == '__main__':
-    for angle in [55,75,95,105,135,220,230,310]:
+    for angle in [55,75,95,105,135,220,230,310,125,240,250]:
         calibrator('../data/tungsten/Angles/{}'.format(angle), plotting=True)
 

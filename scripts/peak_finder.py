@@ -86,8 +86,8 @@ def peak_finder(sup_path, bins, plot = True):
 if __name__ == '__main__':
     peaks=[]
     uncertainty = []
-    bins = [[500,700],[600,800],[700,950],[750,1050],[1200,1550],[1100,1450],[1100,1350],[540,650]]
-    angles = [55,75,95,105,220,135,230,310]
+    bins = [[500,700],[600,800],[700,950],[750,1050],[1200,1550],[1100,1450],[1100,1350],[540,650], [950,1300],[900,1350],[800,1200]]
+    angles = [55,75,95,105,220,135,230,310,125,240,250]
     for i in range(len(angles)):
         res = peak_finder(path.join('../data', 'tungsten/Angles/{}/'.format(angles[i])), [bins[i][0], bins[i][1]])
         peaks.append(res[0][0])

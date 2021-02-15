@@ -44,8 +44,8 @@ if __name__ == '__main__':
         mass.append(temp_mass) 
         print('theta = {} deg -> mass = {} kg'.format( peaks_data['angles'][i], temp_mass))
 
-        plt.scatter(i+1, temp_mass["nominal_value"], marker = 's')
-        plt.errorbar(i+1, temp_mass["nominal_value"], yerr = temp_mass["std_dev"], linewidth = 3, capsize=10)
+        plt.scatter(peaks_data['angles'][i], temp_mass["nominal_value"], marker = 's')
+        plt.errorbar(peaks_data['angles'][i], temp_mass["nominal_value"], yerr = temp_mass["std_dev"], linewidth = 3, capsize=10)
 
     avg = np.average([x["nominal_value"] for x in mass], weights= [x["std_dev"]**-2 for x in mass])
     # std = np.std([x["nominal_value"] for x in mass])
@@ -56,11 +56,11 @@ if __name__ == '__main__':
             linestyle = '--')
     plt.fill_between(np.linspace(0,359,360), np.ones(360)*avg-std,np.ones(360)*avg+std, color = 'red', alpha = 0.3)
     plt.ylim(0.47, 0.56)
-    plt.xlim(0,9)
-    plt.legend(['Avg', 'Lit',r'$55^\circ$',r'$75^\circ$',r'$95^\circ$',r'$125^\circ$',
-                r'$220^\circ$',r'$135^\circ$',r'$230^\circ$',r'$310^\circ$'], fontsize = 12, loc='lower left')
+    # plt.xlim(0,13)
+    # plt.legend(['Avg', 'Lit',r'$55^\circ$',r'$75^\circ$',r'$95^\circ$',r'$125^\circ$',
+    #             r'$220^\circ$',r'$135^\circ$',r'$230^\circ$',r'$310^\circ$'], fontsize = 12, loc='lower left')
     plt.ylabel(r'Mass (MeV/$c^2$)')
-    plt.xticks([])
+    # plt.xticks([])
     plt.tight_layout()
     plt.savefig('../figures/mass.png')
     plt.show()
