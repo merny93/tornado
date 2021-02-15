@@ -75,9 +75,9 @@ def peak_finder(sup_path, bins, plot = True):
         print(chi_sqd)
         print(popt[0], unc[0])
         plt.savefig(path.join(sup_path + 'gaussian.png'))
-        plt.show()
+        # plt.show()
         plt.close()
-        print(popt, unc)
+        # print(popt, unc)
     return popt, unc
     
     

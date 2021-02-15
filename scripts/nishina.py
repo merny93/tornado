@@ -10,18 +10,18 @@ from scipy.optimize import curve_fit
 from scipy.interpolate import interp1d 
 from scipy import integrate
 
-def thomson(theta, a):
-    theta = theta*np.pi/180 - np.pi
+def thomson(theta, a,b):
+    angle = theta*np.pi/180 - b
     r0 = con.physical_constants['classical electron radius'][0]
     delta_omega = 1 # we will fit for it
-    return (1/2)*r0**2*(1 + np.cos(theta)**2)*a
+    return (1/2)*r0**2*(1 + np.cos(angle)**2)*a
 
-def nishina(theta, a):
-    thom = thomson(theta, a)
-    theta = theta*np.pi/180 - np.pi
+def nishina(theta, a,b):
+    thom = thomson(theta, a,b)
+    angle = theta*np.pi/180 - b
     Ei = 661.657e3*con.e
     alpha = Ei/(con.m_e*con.c**2)
-    k_n = (1+(alpha**2*(1-np.cos(theta))**2)/((1+np.cos(theta)**2)*(1+alpha*(1-np.cos(theta)))))/(1+alpha*(1-np.cos(theta)))**2
+    k_n = (1+(alpha**2*(1-np.cos(angle))**2)/((1+np.cos(angle)**2)*(1+alpha*(1-np.cos(angle)))))/(1+alpha*(1-np.cos(angle)))**2
     value = a*k_n*thom
     return value
 
@@ -41,18 +41,18 @@ if __name__ == '__main__':
         a_0 = un.ufloat(res[0][2], res[1][2])
         sigma = un.ufloat(res[0][1],res[1][1])
         total_time = un.ufloat(30,2)*30
-        print(res[0][0])
         rate = (a_0*sigma*np.sqrt(2*np.pi)/total_time)
         rates.append(rate.nominal_value)
         rates_uncertainties.append(rate.std_dev)
     
     x = np.linspace(0,360,1000)
-    res1 = curve_fit(nishina, angles, rates, p0 = [1e30], sigma = rates_uncertainties)
-    res2 = curve_fit(thomson, angles, rates, p0 = [1e30], sigma = rates_uncertainties)
+    res1 = curve_fit(nishina, angles, rates, p0 = [1e15, np.pi], sigma = rates_uncertainties)
+    res2 = curve_fit(thomson, angles, rates, p0 = [1e30, np.pi], sigma = rates_uncertainties)
+    print(res1[0],res2[0])
     
     plt.figure()
-    plt.plot(x, nishina(x, res1[0][0]), label = 'Klein-Nishina')  
-    plt.plot(x, thomson(x, res2[0][0]), label = 'Thomson')  
+    plt.plot(x, nishina(x, *res1[0]), label = 'Klein-Nishina')  
+    plt.plot(x, thomson(x, *res2[0]), label = 'Thomson')  
     plt.scatter(angles,  rates, label = 'data')
     plt.errorbar(angles,  rates, yerr =  rates_uncertainties, xerr = 1.5*np.ones(len(angles)), ls = 'none', color = 'b')
     plt.xlim(0, 360)
