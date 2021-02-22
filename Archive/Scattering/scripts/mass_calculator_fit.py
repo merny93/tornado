@@ -40,7 +40,7 @@ def fitter():
         # print(value.n, value.std_dev)
         data_uncertainties.append(value.std_dev)
         
-    res = curve_fit(mass_electron, peaks_data['angles'], data, p0 = [0.511, np.pi], sigma = data_uncertainties)
+    res = curve_fit(mass_electron, peaks_data['angles'], data, p0 = [0.511, np.pi], sigma = data_uncertainties, absolute_sigma=True)
     popt = res[0]
     unc = np.sqrt(np.diag(res[1]))
     chi_sqd = np.sum((data-mass_electron(peaks_data['angles'], *popt))**2/(data_uncertainties)) / (len(data) - 2)
