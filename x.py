@@ -109,7 +109,7 @@ for window in windows:
     #do something im not sure what
     for ax in axs:
         ax.label_outer()
-        ax.set(xlabel=r"Diffraction Scattering Angle ($2\theta$)")
+        ax.set(xlabel=r"$2\theta$ (in degrees)")
 
     plt.show()
 
