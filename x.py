@@ -35,11 +35,14 @@ def double_fit(x, *argvs):
 
 
 #these windows are where the peaks are in angle units (NOT ARRAY INDEX)
-windows = [[41,46],[48,53],[72,77],[88,93],[93,98]]
+windows = [[41.5,45.5],[48,53],[72,77],[88,93], [93,98]]
 
 
 
 ##loop through the windows and try to fit:
+
+theta_fit= []
+
 for window in windows:
     #window is in angle so lets get it in index
     pos = np.argwhere(np.logical_and(data["angle"]>window[0], data["angle"]<window[1]))
@@ -47,14 +50,15 @@ for window in windows:
     y = np.array(data["count"][pos]).flatten()
     #noise as sqrt of count but dont let it get too small
     noise = np.sqrt(y)
-    noise[noise < 5] = 5
+    noise[noise < 2] = 2
 
     #optimize***************
     #first get a easy run-through using the gaussian
     popt,pcov = curve_fit(fit_func, x,y, p0=[sum(window)/2,1, 250, 0.7], sigma=noise, absolute_sigma=True)
 
     #this gives a really good first guess for the next step
-    popt,pcov = curve_fit(double_fit, x,y, p0=[popt[0] + 0.1,popt[1], popt[2]/2, 0,popt[0] - 0.1,popt[1], popt[2]/2, 0, 0,0,0], sigma=noise, absolute_sigma=True, maxfev=100000)
+    popt,pcov = curve_fit(double_fit, x,y, p0=[popt[0] - 0.5,popt[1], popt[2]/2, 0,popt[0] + 0.5,popt[1], popt[2]/2, 0,0,0], 
+                        sigma=noise, absolute_sigma=True, maxfev=1000000, bounds=([0, 0,0,0,popt[0],0,0,0, -np.inf, -np.inf],[popt[0], np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf, np.inf, np.inf]))
     #now get a prediction for residual calculations!
     y_pred = double_fit(x,*popt)
     
@@ -65,6 +69,10 @@ for window in windows:
     print("chisqd is about,",  chi_sqd)
     print("position is,", popt[0], "+/-", np.sqrt(np.diag(pcov))[0] )
     
+    #save to the results
+    theta_fit.append((popt[0], np.sqrt(np.diag(pcov))[0]))
+    theta_fit.append((popt[4], np.sqrt(np.diag(pcov))[4]))
+
     #for plot get high res
     x_high = np.linspace(x[0], x[-1], num=250)
     y_high = double_fit(x_high, *popt)
@@ -105,3 +113,25 @@ for window in windows:
 
     plt.show()
 
+##we fit for theta_fit
+## its an list with 2 lists in it. Each of the inner lists constains tupples giving the peak position and 
+
+#the new fitting fit needs to work with different h,k,l
+# Make a wrapper that will generate fitting functions with different h,k,l 
+def shape_func(lmda_sqd_times_combined_hkl, a):
+    return np.rad2deg(np.arcsin(np.sqrt(lmda_sqd_times_combined_hkl/ (4* a**2)))) * 2
+
+hkls = [3,4,8,11, 12]
+lmdas = [0.15443e-9,0.15406e-9][::-1]
+
+from itertools import product
+x_s = np.array(list(map(lambda x: x[0] * x[1]**2, product(hkls, lmdas))))
+y_s = np.array([points[0] for points in theta_fit])
+n_s = np.array([points[1] for points in theta_fit])
+popt,pcov = curve_fit(shape_func,x_s, y_s, p0= [3.5e-10], sigma=n_s)
+print(n_s)
+print(popt[0], "+/-", np.sqrt(np.diag(pcov))[0])
+print(np.sum((y_s - shape_func(x_s, *popt)/n_s)**2))
+plt.scatter(x_s, y_s)
+plt.plot(x_s, shape_func(x_s, *popt))
+plt.show()
