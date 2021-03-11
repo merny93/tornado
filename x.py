@@ -50,6 +50,7 @@ def fitter(filename, windows):
 
     theta_fit= []
     i=0
+    peaks_data = {}
     for window in windows:
         i+=1
         #window is in angle so lets get it in index
@@ -88,7 +89,7 @@ def fitter(filename, windows):
         #            popt[0], np.inf,np.inf,np.inf,
         #            np.inf,np.inf])
         popt,pcov = curve_fit(double_fit, x,y, p0=p0, sigma=noise, absolute_sigma=True, maxfev=1000000) #, bounds=bounds)
-        print(popt)
+        # print(popt)
         #now get a prediction for residual calculations!
         y_pred = double_fit(x,*popt)
         
@@ -96,8 +97,8 @@ def fitter(filename, windows):
         chi_sqd = np.sum(((y-y_pred)/noise)**2)/x.size
         
         #output
-        print("chisqd is about,",  chi_sqd)
-        print("position is,", popt[0], "+/-", np.sqrt(np.diag(pcov))[0] )
+        # print("chisqd is about,",  chi_sqd)
+        # print("position is,", popt[0], "+/-", np.sqrt(np.diag(pcov))[0] )
         
         #save to the results
         #order is critical here!
@@ -144,6 +145,10 @@ def fitter(filename, windows):
             ax.set(xlabel=r"$2\theta$ (in degrees)")
 
         plt.savefig('./figures/{}_{}_voigt.png'.format(filename, i))
+        peaks_data['peak_{}'.format(i)] = {}
+        peaks_data['peak_{}'.format(i)]['popt'] = popt[0]
+        peaks_data['peak_{}'.format(i)]['unc'] = np.sqrt(np.diag(pcov))[0]
+        peaks_data['peak_{}'.format(i)]['chi'] = chi_sqd
 
     ##we fit for theta_fit
     ## its an list with 2 lists in it. Each of the inner lists constains tupples giving the peak position and 
@@ -156,10 +161,11 @@ def fitter(filename, windows):
     y_s = np.array([points[0] for points in theta_fit])
     n_s = np.array([points[1] for points in theta_fit])
     popt,pcov = curve_fit(shape_func,x_s, y_s, p0= [3.5e-10, 0], sigma=n_s)
-    print('n_s:', n_s)
-    print(popt[0], "+/-", np.sqrt(np.diag(pcov))[0])
-    print('theta_0:', popt[-1], '+/-', pcov[-1])
-    print('chi_sqd:',np.sum((y_s - shape_func(x_s, *popt))**2/n_s**2)/len(y_s-2))
+    # print('n_s:', n_s)
+    # print(popt[0], "+/-", np.sqrt(np.diag(pcov))[0])
+    # print('theta_0:', popt[-1], '+/-', pcov[-1])
+    chi_sqd = np.sum((y_s - shape_func(x_s, *popt))**2/n_s**2)/len(y_s-2)
+    # print('chi_sqd:',np.sum((y_s - shape_func(x_s, *popt))**2/n_s**2)/len(y_s-2))
 
     x_high = np.linspace(x_s[0], x_s[-1], num=250)
     y_high = shape_func(x_high, *popt)
@@ -203,6 +209,10 @@ def fitter(filename, windows):
         ax.set_xlabel(r"$\lambda^2(h^2+k^2+l^2)$")
 
     plt.savefig('./figures/{}_lattice.png'.format(filename))
+    peaks_data['line_popt'] = popt
+    peaks_data['line_unc'] = np.sqrt(np.diag(pcov))
+    peaks_data['line_chi'] = chi_sqd
+    return peaks_data
 
 if __name__ == '__main__':
     filenames = ["Cu_03_09_20", "Cu25Ni75", "Cu50Ni50", "Cu75Ni25", "Ni_03_09_20"]
@@ -211,6 +221,10 @@ if __name__ == '__main__':
             [[41.5,48],[48,56],[72,80],[88,95], [95,99]],
             [[41.5,49],[48,56],[72,80],[88,95], [93,99]],
             [[41.5,50],[48,56],[72,80],[90,96], [97,101]]]
-
+    total_data = {}
     for i in range(len(filenames)):
-        fitter(filenames[i], bins[i])
+        total_data['{}'.format(filenames[i])] = (fitter(filenames[i], bins[i]))
+    # print(total_data)
+    import pprint 
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(total_data)
