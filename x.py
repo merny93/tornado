@@ -125,7 +125,7 @@ def fitter(filename, windows):
 
         #get spify
         spify.residual_plot(x,y,noise, double_fit, popt,
-                            "$2\theta$ (in degrees)","Counts","Residuals", 
+                            r"$2\theta \ (^\circ)$","Counts","Residuals", 
                             filename+"_"+str(i+1))
         
         peaks_data['peak_{}'.format(i)] = {}
@@ -157,21 +157,23 @@ def fitter(filename, windows):
 
     #get spify
     plt.clf()
-    plt.rcParams.update({'font.size': 16})
+    plt.rcParams.update({'font.size': 24})
 
 
     fig = plt.figure()
     gs = fig.add_gridspec(2, hspace = 0, height_ratios = [3,1])
     axs = gs.subplots(sharex= True)
+    plt.rcParams.update({'font.size': 24})
     #fig.suptitle("Sample fits")
 
-    axs[0].plot(x_high,y_high, label="fit", color="magenta")
-    axs[0].scatter(x_s, y_s, label="data", marker="x", s=25, c="black" , linewidth= 2)
-    axs[0].legend(loc = 'upper left')
+    axs[0].plot(x_high/1e-19,y_high, label="fit", color="magenta")
+    axs[0].scatter(x_s/1e-19, y_s, label="data", marker=".", s=25, c="black" , linewidth= 2)
+    axs[0].legend(loc = 'upper left', fontsize = 18)
 
-    axs[1].scatter(x_s, y_pred-y_s, marker="x", s=25, c="black" , linewidth= 2)
+    axs[1].scatter(x_s/1e-19, y_pred-y_s, marker=".", s=25, c="black" , linewidth= 2)
     axs[1].axhline(y=0,c="magenta", linestyle="--")
-    axs[1].errorbar(x_s,  y_pred-y_s, yerr = n_s, linestyle="")
+    axs[1].errorbar(x_s/1e-19,  y_pred-y_s, yerr = n_s, linestyle="", color='black')
+    axs[1].set_yticks([-0.02,0, 0.02])
     # axs[1].set_ylim(-10,10)
 
     #get rid of overlap
@@ -184,13 +186,14 @@ def fitter(filename, windows):
             label.set_visible(False)
 
     #add the y axis label
-    axs[0].set_ylabel(r"$\theta$")
-    axs[1].set_ylabel("Residuals")
+    axs[0].set_ylabel(r"$\theta \ (^{\circ} )$")
+    axs[1].set_ylabel("Residuals") 
     #do something im not sure what
     for ax in axs:
         ax.label_outer()
-        ax.set_xlabel(r"$\lambda^2(h^2+k^2+l^2)$")
+        ax.set_xlabel(r"$\lambda^2(h^2+k^2+l^2) \ (10^{-19} \ \mathrm{m}^2)$")
 
+    plt.tight_layout()
     plt.savefig('./figures/{}_lattice.png'.format(filename))
     peaks_data['line_popt'] = popt
     peaks_data['line_unc'] = np.sqrt(np.diag(pcov))

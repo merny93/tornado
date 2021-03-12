@@ -5,7 +5,7 @@ import numpy as np
 def residual_plot(x,data,noise,func,params, xlabel, ylabel1,ylabel2, filename):
     #get spify
     plt.clf()
-    plt.rcParams.update({'font.size': 16})
+    plt.rcParams.update({'font.size': 24})
 
 
     fig = plt.figure()
@@ -19,13 +19,17 @@ def residual_plot(x,data,noise,func,params, xlabel, ylabel1,ylabel2, filename):
     y_pred = func(x,*params)
 
     axs[0].plot(x_high,y_high, label="fit", color="magenta")
-    axs[0].scatter(x, data, label="data", marker="x", s=25, c="black", linewidth=2)
+    axs[0].scatter(x, data, label="data", marker=".", s=25, c="black", linewidth=2)
     axs[0].errorbar(x, data, yerr = noise, linestyle="", c="black")
     
-    axs[0].legend()
-    axs[1].scatter(x, y_pred-data, marker="x", s=25, c="black" , linewidth= 2)
+    axs[0].legend(fontsize = 18)
+    axs[1].scatter(x, y_pred-data, marker=".", s=25, c="black" , linewidth= 2)
+    axs[1].errorbar(x, y_pred-data, yerr = noise, linestyle="", c="black")
     axs[1].axhline(y=0,c="magenta", linestyle="--")
-    
+    axs[1].set_xlim(x[0], x[-1])
+    # axs[1].set_yticklabels(labels = [-10,0,10],fontsize = 5)
+    axs[1].set_yticks([-10,0,10])
+
     
     #get rid of overlap
     to_kills = axs[0].yaxis.get_ticklabels()
@@ -44,6 +48,7 @@ def residual_plot(x,data,noise,func,params, xlabel, ylabel1,ylabel2, filename):
         ax.label_outer()
         ax.set(xlabel=r"{}".format(xlabel))
 
+    plt.tight_layout()
     plt.savefig('./figures/{}_voigt.png'.format(filename))
 
 
@@ -64,6 +69,7 @@ def lattice_alloy_plot(data, litterature, header):
     '''
     plt.clf()
     plt.figure()
+    plt.rcParams.update({'font.size': 18})
     plt.scatter(data[0], data[1], color = 'black')
     plt.scatter(litterature[0], litterature[1], color = 'blue')
     plt.legend(data[3]+litterature[2])
