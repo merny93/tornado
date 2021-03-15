@@ -83,7 +83,7 @@ def reverse_line(x,a,b):
 def line(x,a,b):
     return a*x+b
 
-def line_fit(points_y, litterature, angle, plot = True):
+def line_fit(points_y, litterature, angle, plot = True, legend_location = ):
     '''
     Takes in
     points_y: calibration data and uncertainty
@@ -113,7 +113,7 @@ def line_fit(points_y, litterature, angle, plot = True):
                      (litterature[0][2]-40, points_y[:,0][2]-100),(litterature[0][0], points_y[:,0][0]-50)]
         for i, txt in enumerate(n):
             axs[0].annotate(txt, positions[i], fontsize=14)
-        axs[0].legend(loc = 'upper left', fontsize = 14)
+        axs[0].legend(loc = legend_location, fontsize = 14)
         #plot the residuals
         linspace = np.linspace(np.min(litterature[0]),np.max(litterature[0]),1000)
         axs[1].scatter(litterature[0],points_y[:,0]-reverse_line(litterature[0], *popt),  marker = '.')

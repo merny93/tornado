@@ -164,21 +164,15 @@ def fitter(filename, windows):
     peaks_data['line_chi'] = chi_sqd
     return peaks_data
 
-def full_anal(path_, bins, print=False):
-    if os.path.exists(path_):
-        print("DAFUQQQQ")
-    else:
-        print("makes sense")
+def full_anal(path_, bins, print_=False):
     filenames = os.listdir(path_)
-    print(filenames)
     filenames = list(map(lambda x: x.split(".")[0], filenames))
-    print(type(filenames))
     # filenames = ["Cu_03_09_20", "Cu75Ni25","Cu50Ni50","Cu25Ni75", "Ni_03_09_20"]
     total_data = {}
     for i in range(len(filenames)):
         total_data['{}'.format(filenames[i])] = (fitter(filenames[i], bins[i]))
     # print(total_data)
-    if print:
+    if print_:
         try:
             import pprint 
             pp = pprint.PrettyPrinter(indent=4)
@@ -188,7 +182,6 @@ def full_anal(path_, bins, print=False):
     
     
     y_data = [[],[]]
-    print(type(filenames))
     for name in filenames:
         y_data[0].append(total_data[name]["line_popt"][0])
         y_data[1].append(total_data[name]["line_unc"][0])
@@ -199,22 +192,22 @@ def full_anal(path_, bins, print=False):
     #                     [361.49e-12, 352.4e-12],
     #                     ['Litterature']]
     # spify.lattice_alloy_plot(plot_data, plot_litterature, 'Cu-Ni')
-    x = np.array([25,50,75,0, 100] ,dtype = float)
+    x = np.array([0,75,50,25, 100] ,dtype = float)
     popt,pcov = curve_fit(line,x,y_data[0], p0= [1,1], sigma=y_data[1])
 
     chi_sqd = np.sum((y_data[0] -line(np.array(x), *popt))**2/y_data[1]**2)/len(y_data[0]-2)
 
     spify.residual_plot(x, y_data[0], y_data[1],
-                        line, popt, "Lattice Parameter","Nickel Concentration","Residuals", 
-                        path_[-15:] + "_vegard")
+                        line, popt,"Nickel Concentration", "Lattice Parameter","Residuals", 
+                        path_[-15:] + "_vegard", legend_loc = "upper right")
 
 if __name__ == '__main__':
-    copper_bins = [[[41.5,49],[48,56],[72,80],[88,95], [95,101]],
+    copper_bins = [[[41.5,45.5],[48,53],[72,77],[88,93], [93,98]],
+            [[41.5,49],[48,56],[72,80],[88,95], [95,101]],
             [[41.5,48],[48,56],[72,80],[88,95], [94,100]],
             [[41.5,47],[48,56],[72,80],[87,94], [95,99]],
-            [[41.5,45.5],[48,53],[72,77],[88,93], [93,98]],
             [[41.5,50],[48,56],[72,80],[90,96], [97,101]]]
-    full_anal('X-Ray/data/copper_nickel_series', copper_bins, print=True)
+    full_anal('X-Ray/data/copper_nickel_series', copper_bins, print_=True)
     
 
 

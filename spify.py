@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def residual_plot(x,data,noise,func,params, xlabel, ylabel1,ylabel2, filename, renorm = False):
+def residual_plot(x,data,noise,func,params, xlabel, ylabel1,ylabel2, filename, renorm = False, legend_loc = 'upper left'):
     #get spify
     plt.clf()
     plt.rcParams.update({'font.size': 24})
@@ -27,7 +27,7 @@ def residual_plot(x,data,noise,func,params, xlabel, ylabel1,ylabel2, filename, r
     axs[0].scatter(x, data, label="data", marker=".", s=25, c="black", linewidth=2)
     axs[0].errorbar(x, data, yerr = noise, linestyle="", c="black")
     
-    axs[0].legend(loc = 'upper left', fontsize = 18)
+    axs[0].legend(loc = legend_loc, fontsize = 18)
     axs[1].scatter(x, y_pred-data, marker=".", s=25, c="black" , linewidth= 2)
     axs[1].errorbar(x, y_pred-data, yerr = noise, linestyle="", c="black")
     axs[1].axhline(y=0,c="magenta", linestyle="--")
