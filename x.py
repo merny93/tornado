@@ -9,7 +9,7 @@ import spify
 #the new fitting fit needs to work with different h,k,l
 # Make a wrapper that will generate fitting functions with different h,k,l 
 def shape_func(lmda_sqd_times_combined_hkl, a, theta_0):
-    return np.rad2deg(np.arcsin(np.sqrt(lmda_sqd_times_combined_hkl/ (4* a**2)) + theta_0)) * 2
+    return np.rad2deg(np.arcsin(np.sqrt(lmda_sqd_times_combined_hkl/ (4* a**2)) )) * 2 + 2*theta_0
 
 #GAUSSIAN FIRST TRY
 def fit_func(x, *argvs):
