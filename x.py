@@ -31,14 +31,14 @@ def line(x, a,b):
 
 
 
-def fitter(filename, windows):
-    d = s.data.load("X-Ray/data/copper_nickel_series/{}.UXD".format(filename))
+def fitter(filename, windows, path_, hkls, p0_fitter):
+    d = s.data.load(os.path.join(path_,"{}.UXD".format(filename)))
     data = {"angle": d[0], "count": d[1]}
 
 
     #plot the data for some good vibes and easy checks
-    # plt.plot(data["angle"], data["count"])
-    # plt.show()
+    plt.plot(data["angle"], data["count"])
+    plt.show()
 
 
     ##DEBUGING OF FITTING FUNCTION
@@ -135,7 +135,6 @@ def fitter(filename, windows):
     ##we fit for theta_fit
     ## its an list with 2 lists in it. Each of the inner lists constains tupples giving the peak position and 
 
-    hkls = [3,4,8,11,12]
     lmdas = sorted([0.1541838e-9])
     ##Create the x_s by combining all the hkls and lambdas
     from itertools import product
@@ -145,7 +144,7 @@ def fitter(filename, windows):
     n_s = np.array([points[1] for points in theta_fit])
 
     #fit for the parameter a
-    popt,pcov = curve_fit(shape_func,x_s, y_s, p0= [3.5e-10, 0], sigma=n_s)
+    popt,pcov = curve_fit(shape_func,x_s, y_s, p0= p0_fitter, sigma=n_s)
 
     chi_sqd = np.sum((y_s - shape_func(x_s, *popt))**2/n_s**2)/len(y_s-2)
 
@@ -164,13 +163,13 @@ def fitter(filename, windows):
     peaks_data['line_chi'] = chi_sqd
     return peaks_data
 
-def full_anal(path_, bins, print_=False):
+def full_anal(path_, bins, hkls, print_=False, line_plot=False, p0_fitter = [3.5e-10, 0]):
     filenames = os.listdir(path_)
     filenames = list(map(lambda x: x.split(".")[0], filenames))
     # filenames = ["Cu_03_09_20", "Cu75Ni25","Cu50Ni50","Cu25Ni75", "Ni_03_09_20"]
     total_data = {}
     for i in range(len(filenames)):
-        total_data['{}'.format(filenames[i])] = (fitter(filenames[i], bins[i]))
+        total_data['{}'.format(filenames[i])] = (fitter(filenames[i], bins[i], path_,hkls, p0_fitter))
     # print(total_data)
     if print_:
         try:
@@ -180,26 +179,26 @@ def full_anal(path_, bins, print_=False):
         except:
             print(total_data)
     
-    
-    y_data = [[],[]]
-    for name in filenames:
-        y_data[0].append(total_data[name]["line_popt"][0])
-        y_data[1].append(total_data[name]["line_unc"][0])
-    
-    y_data[0] = np.array(y_data[0], dtype = float)
-    y_data[1] = np.array(y_data[1], dtype = float)
-    # plot_litterature = [[0,100],
-    #                     [361.49e-12, 352.4e-12],
-    #                     ['Litterature']]
-    # spify.lattice_alloy_plot(plot_data, plot_litterature, 'Cu-Ni')
-    x = np.array([0,75,50,25, 100] ,dtype = float)
-    popt,pcov = curve_fit(line,x,y_data[0], p0= [1,1], sigma=y_data[1])
+    if line_plot:
+        y_data = [[],[]]
+        for name in filenames:
+            y_data[0].append(total_data[name]["line_popt"][0])
+            y_data[1].append(total_data[name]["line_unc"][0])
+        
+        y_data[0] = np.array(y_data[0], dtype = float)
+        y_data[1] = np.array(y_data[1], dtype = float)
+        # plot_litterature = [[0,100],
+        #                     [361.49e-12, 352.4e-12],
+        #                     ['Litterature']]
+        # spify.lattice_alloy_plot(plot_data, plot_litterature, 'Cu-Ni')
+        x = np.array([0,75,50,25, 100] ,dtype = float)
+        popt,pcov = curve_fit(line,x,y_data[0], p0= [1,1], sigma=y_data[1])
 
-    chi_sqd = np.sum((y_data[0] -line(np.array(x), *popt))**2/y_data[1]**2)/len(y_data[0]-2)
+        chi_sqd = np.sum((y_data[0] -line(np.array(x), *popt))**2/y_data[1]**2)/len(y_data[0]-2)
 
-    spify.residual_plot(x, y_data[0], y_data[1],
-                        line, popt,"Nickel Concentration", "Lattice Parameter","Residuals", 
-                        path_[-15:] + "_vegard", legend_loc = "upper right")
+        spify.residual_plot(x, y_data[0], y_data[1],
+                            line, popt,"Nickel Concentration", "Lattice Parameter","Residuals", 
+                            path_[-15:] + "_vegard", legend_loc = "upper right")
 
 if __name__ == '__main__':
     copper_bins = [[[41.5,45.5],[48,53],[72,77],[88,93], [93,98]],
@@ -207,7 +206,12 @@ if __name__ == '__main__':
             [[41.5,48],[48,56],[72,80],[88,95], [94,100]],
             [[41.5,47],[48,56],[72,80],[87,94], [95,99]],
             [[41.5,50],[48,56],[72,80],[90,96], [97,101]]]
-    full_anal('X-Ray/data/copper_nickel_series', copper_bins, print_=True)
+    copper_nickel_hkls = [3,4,8,11,12]
+    # full_anal('X-Ray/data/copper_nickel_series', copper_bins, copper_nickel_hkls, print_=True)
+    lead_bins = [[[30,35],[36,38],[50,56],[60,65],[63,67],[74,82],[82,87],[87,90],[96,103],[104,112]]]
+    lead_hkls = [3,4,8,11,12,16,19,20,24,27]
+    full_anal('X-Ray/data/pb', lead_bins, lead_hkls , print_=True, p0_fitter = [1e-9, 0])
+
     
 
 
