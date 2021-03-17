@@ -8,6 +8,15 @@ import os
 
 
 class SmartFit:
+    """
+        Smart overlapping fitting routine
+
+        Init it with the data as a dictionary with angle and count
+
+        Call set_peak_pos with the positions and widths in 2theta degrees
+
+        then Call full fit for fun and profit. Will return the peak pos and uncertainties
+    """
     def __init__(self, data):
         #data is a dict of numpy arrays:
         #"angle" give the angles
