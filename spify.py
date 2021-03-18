@@ -15,8 +15,11 @@ def residual_plot(x,data,noise,func,params, xlabel, ylabel1,ylabel2, filename, r
 
     #generate the high
     
-    x_high = np.linspace(x[0],x[-1], num=250)
+    #x_high = np.linspace(x[0],x[-1], num=250)
+    x_high = x ##temp this is to fix ************************************************
     y_high = func(x_high, *params)
+    print(y_high.shape)
+    print(x_high.shape)
     y_pred = func(x,*params)
 
     if renorm:

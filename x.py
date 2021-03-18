@@ -12,6 +12,14 @@ import os
 def shape_func(lmda_sqd_times_combined_hkl, a, theta_0):
     return np.rad2deg(np.arcsin(np.sqrt(lmda_sqd_times_combined_hkl/ (4* a**2)) )) * 2 + 2*theta_0
 
+# Same but for tin
+# x is [h,k,l,lambda]
+def tin_func(x, a, c, theta_0):
+    return np.rad2deg(np.arcsin(np.sqrt(1/4*((x[0]**2+x[1]**2)/a**2 + x[2]**2/c**2)*x[3]**2))) * 2 + 2*theta_0
+
+def tin_func_2(x, theta_0):
+    return np.rad2deg(np.arcsin(np.sqrt(x))) * 2 + 2*theta_0
+
 #GAUSSIAN FIRST TRY
 def fit_func(x, *argvs):
     #start with gaussian
@@ -106,7 +114,7 @@ def fitter(filename, windows, path_, hkls, p0_fitter):
                    np.inf,np.inf])
         '''
 
-        popt,pcov = curve_fit(double_fit, x,y, p0=p0, sigma=noise, absolute_sigma=True, maxfev=1000000) #, bounds=bounds)
+        popt, pcov = curve_fit(double_fit, x,y, p0=p0, sigma=noise, absolute_sigma=True, maxfev=1000000) #, bounds=bounds)
         # print(popt)
         #now get a prediction for residual calculations!
         y_pred = double_fit(x,*popt)

@@ -44,12 +44,12 @@ class SmartFit:
         from functools import reduce
         window_merge = reduce(lambda x,y: x + [y] if y[0] > x[-1][1] else x[:-1] + [[x[-1][0] , max(x[-1][1], y[1])]], window_list, [window_list[0]])
         #i think this works :)
-        print(window_merge)
+        # print(window_merge)
         self.merged= window_merge
         self.peaks = peak_pos
         self.extents = window_list
 
-    def full_fit(self):
+    def full_fit(self, plot=False, fname=None):
         '''
             loops through the windows and simulationsly fits returning all the peaks and unceratinties
         '''
@@ -62,7 +62,7 @@ class SmartFit:
         peaks_res = [[],[]]
 
         #use the merged windows
-        for window in self.merged:
+        for count, window in enumerate(self.merged):
             ##this is one fitting section
             #lets get the extents and the centers
 
@@ -83,7 +83,7 @@ class SmartFit:
 
             #generate the full fitting function
             def multi_fit(x, *argvs):
-                total_counts = np.zeros_like(y)
+                total_counts = np.zeros_like(y) #fix this cunt
                 for i, ind in enumerate(inds_peaks):
                     #convert the full array index to this window index
                     extents = [self.extents[ind][0]-offset, self.extents[ind][1]-offset]
@@ -111,25 +111,28 @@ class SmartFit:
             peaks_res[1] += [np.sqrt(np.diag(pcov))[i] for i in range(len(popt)) if i%total_deg == 0]
 
             #more plotting
-            '''
-            goddem = multi_fit(x,*popt)
-            plt.scatter(x,y)
-            plt.plot(x,goddem)
-            plt.show()
-            '''
+            if plot:
+                spify.residual_plot(x, y, n,multi_fit, popt, 
+                                    r"$2\theta$", "Counts",
+                                    "Residuals", 
+                                    fname+"_"+str(count)+"_"+"voight")
+            
         return peaks_res
 
 
 
 if __name__=="__main__":
-    d = s.data.load("X-Ray/data/lead_tin_series/Pb25Sn75_09-09-20.UXD")
+    d = s.data.load("X-Ray/data/lead_tin_series/Sn_08-09-20.UXD")
     data = {"angle": d[0], "count": d[1]}
     plt.plot(data["angle"], data["count"])
     plt.show()
     fit = SmartFit(data)
-    peak_pos = [30.7,31.3,32.1, 36.5, 36.3,44,45,52.5,55.4]
-    peak_width = [2 for i in range(len(peak_pos))]
+    
+    # peak_pos = [30.7,31.3,32.1, 36.5, 36.3,44,45,52.5,55.4]
+    peak_pos = [30.76,32.08,43.86,45.05,55.58,62.61,63.91,64.53]
+    peak_width = [2.5 for i in range(len(peak_pos))]
     fit.set_peak_pos(peak_pos, peak_width)
     # plt.plot(data["count"])
     # plt.show()
-    fit.full_fit()
+    peak_data = fit.full_fit(plot = True, fname="tin_test")
+    np.savez('angles_tin.npz', angles = peak_data[0], uncertainty = peak_data[1])
