@@ -3,19 +3,7 @@ import spify
 import x as x_py
 from scipy.optimize import curve_fit
 
-if __name__=="__main__":
-    # Load the angles
-    data = np.load('angles_tin.npz')
-    angles = np.array(data['angles'])
-    errors = np.array(data['uncertainty'])
-    one_d2 = 4*np.sin(np.deg2rad(np.array(angles/2)))**2/1.541838e-10**2
-
-    from itertools import product
-    # create a list of all the possible hkl
-    coms = list(product(range(5), repeat=3))
-
-
-    def check_good(x):
+def check_good_tin(x):
         '''
         Checks if the combination of x (hkl) is plausible
         using rules from bilbao crystallographic server
@@ -31,7 +19,7 @@ if __name__=="__main__":
             good = True
         elif (h==k) and ((2*h+l)%4 == 0):
             good  = True 
-        elif (h==0) and ((k+l)%2==0):
+        elif (h==0) and k!=0 and ((k+l)%2==0):
             good = True 
         elif (h%2 ==0) and (k%2==0) and (l==0):
             good = True 
@@ -42,8 +30,20 @@ if __name__=="__main__":
     
         return good
 
+if __name__=="__main__":
+    # Load the angles
+    data = np.load('angles_tin.npz')
+    angles = np.array(data['angles'])
+    errors = np.array(data['uncertainty'])
+    one_d2 = 4*np.sin(np.deg2rad(np.array(angles/2)))**2/1.541838e-10**2
+
+    from itertools import product
+    # create a list of all the possible hkl
+    coms = list(product(range(5), repeat=3))
+
+
     # Refine the list using the rules for tin
-    good = list(filter(check_good, coms))
+    good = list(filter(check_good_tin, coms))
 
     # Function that orders the choices properly using a and c from litterature
     a,c = 5.83e-10, 3.18e-10
@@ -57,14 +57,8 @@ if __name__=="__main__":
     # print(good)
     # print(norm(np.array(good).T), one_d2)
     # print(good)
-
-    def norm_litt(y):
-        for element in one_d2:
-            if np.abs(norm(y)-element)<0.1e19:
-                return True 
-        return False
-
-    final_filter = np.array(list((filter(norm_litt, good))))
+    np.savez('./miller/tin_indices.npz')
+    '''
 
     x_fit = [final_filter[:,0],final_filter[:,1],final_filter[:,2],np.ones(len(angles))*0.1541838e-9]
     # print(x_fit)
@@ -80,3 +74,4 @@ if __name__=="__main__":
                         "Residuals", 
                         'tin' + "_lattice", renorm=False)
     print(popt, unc)
+    '''
