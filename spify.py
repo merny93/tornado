@@ -18,8 +18,8 @@ def residual_plot(x,data,noise,func,params, xlabel, ylabel1,ylabel2, filename, r
     #x_high = np.linspace(x[0],x[-1], num=250)
     x_high = x ##temp this is to fix ************************************************
     y_high = func(x_high, *params)
-    print(y_high.shape)
-    print(x_high.shape)
+    # print(y_high.shape)
+    # print(x_high.shape)
     y_pred = func(x,*params)
 
     if renorm:
@@ -29,13 +29,14 @@ def residual_plot(x,data,noise,func,params, xlabel, ylabel1,ylabel2, filename, r
     axs[0].plot(x_high,y_high, label="fit", color="magenta")
     axs[0].scatter(x, data, label="data", marker=".", s=25, c="black", linewidth=2)
     axs[0].errorbar(x, data, yerr = noise, linestyle="", c="black")
+    axs[0].set_xlim(x[0], x[-1])
     
     axs[0].legend(loc = legend_loc, fontsize = 18)
     axs[1].scatter(x, -y_pred+data, marker=".", s=25, c="black" , linewidth= 2)
     axs[1].errorbar(x, -y_pred+data, yerr = noise, linestyle="", c="black")
     axs[1].axhline(y=0,c="magenta", linestyle="--")
-    # axs[1].set_yticklabels(labels = [-10,0,10],fontsize = 5)
-    # axs[1].set_yticks([-10,0,10])
+    axs[1].set_yticklabels(labels = [-10,0,10])
+    axs[1].set_yticks([-10,0,10])
 
 
     
