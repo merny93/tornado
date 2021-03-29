@@ -189,7 +189,7 @@ def full_fitter(path_, peak_pos, header, p0, mil_in = 'tin', p02=None, tin_list=
     #Plot it
     plt.figure()
     plt.plot(data["angle"], data["count"])
-    # plt.show()
+    plt.show()
     return [data["angle"], data["count"]]
     
     # plt.savefig('./figures/{}_full.png'.format(header))
@@ -248,10 +248,11 @@ if __name__=="__main__":
                   [43.8,51.3,75.7,91.5,97.0],
                   [43.5,50.8,74.8,90.5,95.8],
                   [44.5,52.0,76.2,92.9,98.7]]
-    # for i,item in enumerate(os.listdir('./X-Ray/data/copper_nickel_series')):
-    #     full_fitter('./X-Ray/data/copper_nickel_series/{}'.format(item),
-    #                 copper_bins[i],
-    #                 item[:-4], [3.5e-10, 0], mil_in= 'fcc' )
+    for i,item in enumerate(os.listdir('./X-Ray/data/mystery')):
+        print(item)
+        full_fitter('./X-Ray/data/mystery/{}'.format(item),
+                    copper_bins[i],
+                    item[:-4], [3.5e-10, 0], mil_in= 'fcc' )
 
     # tin_lead_bins = [[31.4, 32.2,36.44,44.1, 45.0, 52.4, 55.5, 62.3, 64.8, 65.4],
     #                 [30.70,31.4, 32.2,36.44,44.1, 45.0, 52.4, 55.5, 62.3, 64.8, 65.4],
@@ -266,34 +267,37 @@ if __name__=="__main__":
     # full_fitter('./X-Ray/data/lead_tin_series/2_Pb25Sn75_09-09-20.UXD', tin_lead_bins[2],
     #             '2_Pb25Sn75_09-09-20', [4.5e-10, 0], mil_in= 'mix' , p02 = [5.83e-10, 3.18e-10, 0], tin_list=tin_lists[1], lead_list=lead_lists[2])
 
-    data = []
-    legend = []
-    for i,item in enumerate(os.listdir('./X-Ray/data/copper_nickel_series')):
-        print(item)
-        data.append(full_fitter('./X-Ray/data/copper_nickel_series/{}'.format(item),
-                    copper_bins[i],
-                    item[:-4], [3.5e-10, 0], mil_in= 'fcc' ))
-        legend.append(item[:4])
+    # data = []
+    # legend = []
+    # for i,item in enumerate(os.listdir('./X-Ray/data/copper_nickel_series')):
+    #     print(item)
+    #     data.append(full_fitter('./X-Ray/data/copper_nickel_series/{}'.format(item),
+    #                 copper_bins[i],
+    #                 item[:-4], [3.5e-10, 0], mil_in= 'fcc' ))
+    #     legend.append(item[:4])
     
-    plt.figure()
-    plt.clf()
-    plt.rcParams.update({'font.size': 30})
-    for i,item in enumerate(data):
-        plt.plot(item[0],item[1] + 900*(4-i) + 500)
-    miller = np.load('./miller/tin_indices.npz')['indices']
-    plt.legend(['100% Cu', '75% Cu 25% Ni', '50% Cu 50% Ni', '25% Cu 75% Ni', '100% Ni'], fontsize=24, loc = 'upper left')
-    positions = [44.5-1,52.0,76.2,92.9-1,98.7+0.5]
-    plt.text(25, 200, 'Miller Indices:', fontsize = 28)
-    for i in range(5):
-        plt.text(positions[i] - 3, 200, '({} {} {})'.format(miller[i][0],miller[i][1],miller[i][2]),
-         fontsize = 28)
-    plt.ylim(0,5000)
-    plt.xlim(20,105)
-    plt.yticks([])
-    plt.xlabel(r'$2\theta \ (^\circ)$')
-    plt.ylabel('Counts')
-    plt.tight_layout()
-    plt.show()
+    # plt.figure()
+    # plt.clf()
+    # plt.rcParams.update({'font.size': 30})
+    # for i,item in enumerate(data):
+    #     if i == 0:
+    #         plt.plot(item[0],item[1] + 900*(4-i) + 500, color = 'magenta')
+    #     else:
+    #         plt.plot(item[0],item[1] + 900*(4-i) + 500)
+    # miller = np.load('./miller/fcc_indices.npz')['indices']
+    # plt.legend(['100% Cu', '75% Cu 25% Ni', '50% Cu 50% Ni', '25% Cu 75% Ni', '100% Ni'], fontsize=24, loc = 'upper left')
+    # positions = [44.5-1,52.0,76.2,92.9-1,98.7+0.5]
+    # plt.text(25, 200, 'Miller Indices:', fontsize = 28)
+    # for i in range(5):
+    #     plt.text(positions[i] - 3, 200, '({} {} {})'.format(miller[i][0],miller[i][1],miller[i][2]),
+    #      fontsize = 28)
+    # plt.ylim(0,5000)
+    # plt.xlim(20,105)
+    # plt.yticks([])
+    # plt.xlabel(r'$2\theta \ (^\circ)$')
+    # plt.ylabel('Counts')
+    # plt.tight_layout()
+    # plt.show()
 
 
     
