@@ -143,7 +143,7 @@ def fitter(filename, windows, path_, hkls, p0_fitter):
     ##we fit for theta_fit
     ## its an list with 2 lists in it. Each of the inner lists constains tupples giving the peak position and 
 
-    lmdas = sorted([0.1541838e-9])
+    lmdas = sorted([0.1540562e-9])
     ##Create the x_s by combining all the hkls and lambdas
     from itertools import product
     x_s = np.array(list(map(lambda x: x[0] * x[1]**2, product(hkls, lmdas))))
