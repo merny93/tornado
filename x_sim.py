@@ -183,9 +183,8 @@ def bcc_anal(peak_data, p0, header):
 def diamond_anal(peak_data, p0, header):
     # mil_in could be either 'tin' or 'fcc' or others
     miller = np.load('./miller/diamond_indices.npz')['indices']
-    # if header == '4_Pb75Sn25_09_09_20':
-    #     miller.pop(0)
-    #     miller.pop(5)
+    if header == 'SC32_02apr':
+        miller = np.delete(miller, [2], axis=0)
     # For face centered, 1dim x array suffices in which we combine the hkl with lambda
     x_fit = (miller[:,0][:len(peak_data[0])]**2+\
             miller[:,1][:len(peak_data[0])]**2+\
@@ -233,6 +232,31 @@ def tin_anal(peak_data, p0, header):
     return popt, unc, chi_sqd
 
 
+def simple_anal(peak_data, p0, header):
+    # mil_in could be either 'tin' or 'fcc' or others
+    miller = np.load('./miller/simple_indices.npz')['indices']
+    # if header == '4_Pb75Sn25_09_09_20':
+    #     miller.pop(0)
+    #     miller.pop(5)
+    # For face centered, 1dim x array suffices in which we combine the hkl with lambda
+    x_fit = (miller[:,0][:len(peak_data[0])]**2+\
+            miller[:,1][:len(peak_data[0])]**2+\
+            miller[:,2][:len(peak_data[0])]**2)*0.1540562e-9**2
+    # Fit
+    popt,pcov = curve_fit(x_py.shape_func, x_fit, peak_data[0], p0= p0, sigma=peak_data[1])
+    unc = np.sqrt(np.diag(pcov))
+    chi_sqd = np.sum((peak_data[0] - x_py.shape_func(x_fit, *popt))**2/peak_data[1]**2)/len(peak_data[0]-2)
+    # print(chi_sqd)
+    # plot
+    spify.residual_plot(x_fit, peak_data[0], peak_data[1], x_py.shape_func, [popt[0], popt[1]], 
+                    r"$\lambda^2(h^2+k^2+l^2) \ (10^{-19} \ \mathrm{m}^2)$",
+                        r"$2\theta \ (^{\circ} )$",
+                        "Residuals", 
+                        header + "_simple_lattice", renorm=False)
+    # Return the juice
+    return popt, unc, chi_sqd
+
+
 
 def full_fitter(path_, peak_pos, header, p0, mil_in = 'tin', p02=None, tin_list=None, lead_list = None):
     '''
@@ -250,7 +274,7 @@ def full_fitter(path_, peak_pos, header, p0, mil_in = 'tin', p02=None, tin_list=
     #Plot it
     plt.figure()
     plt.plot(data["angle"], data["count"])
-    plt.show()
+    # plt.show()
     # return [data["angle"], data["count"]]
     
     # plt.savefig('./figures/{}_full.png'.format(header))
@@ -258,12 +282,15 @@ def full_fitter(path_, peak_pos, header, p0, mil_in = 'tin', p02=None, tin_list=
     # Fit all the peaks
     fit = SmartFit(data)
     peak_width = [2.5 for i in range(len(peak_pos))]
+    if header == 'Cu3Au_B_14':
+        peak_width[7] = 4
+        print(peak_width)
     fit.set_peak_pos(peak_pos, peak_width)
     # Recover peak position and uncertainty
     peak_data = np.array(fit.full_fit(plot = True, fname=header))
     # print(peak_data)
     # Function that orders the choices properly using a and c from litterature
-    print(peak_data)
+    # print(peak_data)
     if mil_in == 'tin':
         popt, unc, chi_sqd = tin_anal(peak_data, p0, header)
         print(popt,unc, chi_sqd)
@@ -278,6 +305,10 @@ def full_fitter(path_, peak_pos, header, p0, mil_in = 'tin', p02=None, tin_list=
 
     elif mil_in=='diamond':
         popt, unc, chi_sqd = diamond_anal(peak_data, p0, header)
+        print(popt,unc, chi_sqd)
+    
+    elif mil_in=='simple':
+        popt, unc, chi_sqd = simple_anal(peak_data, p0, header)
         print(popt,unc, chi_sqd)
     
     elif mil_in == 'mix':
@@ -302,21 +333,21 @@ def full_fitter(path_, peak_pos, header, p0, mil_in = 'tin', p02=None, tin_list=
 
 if __name__=="__main__":
     # Doing Pure tin
-    full_fitter("X-Ray/data/lead_tin_series/1_Sn08-09-20.UXD",
-                [30.76,32.08,43.86,45.05,55.58,62.61,63.91,64.53],
-                'tin',[5.83e-10, 3.18e-10, 0])
+    # full_fitter("X-Ray/data/lead_tin_series/1_Sn08-09-20.UXD",
+    #             [30.76,32.08,43.86,45.05,55.58,62.61,63.91,64.53],
+    #             'tin',[5.83e-10, 3.18e-10, 0])
 
-    # # Doing Pure Lead
+    # # # Doing Pure Lead
     # full_fitter("X-Ray/data/lead_tin_series/5_Pb_08_09_20D.UXD",
     #             [31.6,36.3,52.5,61.9,65.2,77.1,85.8,88.2,99.4,107.8],
     #             'lead', [4.5e-10, 0], mil_in= 'fcc' )
 
     # Doing the copper nickel alloy
-    # copper_bins = [[43.3,50.6,74.5,89.5,95.3],
-    #               [44,50.9,75.7,92.7,97.7],
-    #               [43.8,51.3,75.7,91.5,97.0],
-    #               [43.5,50.8,74.8,90.5,95.8],
-    #               [44.5,52.0,76.2,92.9,98.7]]
+    copper_bins = [[43.3,50.6,74.5,89.5,95.3],
+                [43.5,50.8,74.8,90.5,95.8],
+                [43.8,51.3,75.7,91.5,97.0],
+                [44,51.1,75.7,92.7,97.7],
+                [44.5,52.0,76.2,92.9,98.7]]
     # for i,item in enumerate(os.listdir('./X-Ray/data/copper_nickel_series')):
     #     print(item)
     #     full_fitter('./X-Ray/data/copper_nickel_series/{}'.format(item),
@@ -336,23 +367,23 @@ if __name__=="__main__":
     # full_fitter('./X-Ray/data/lead_tin_series/2_Pb25Sn75_09-09-20.UXD', tin_lead_bins[2],
     #             '2_Pb25Sn75_09-09-20', [4.5e-10, 0], mil_in= 'mix' , p02 = [5.83e-10, 3.18e-10, 0], tin_list=tin_lists[1], lead_list=lead_lists[2])
 
-    # data = []
-    # legend = []
-    # for i,item in enumerate(os.listdir('./X-Ray/data/copper_nickel_series')):
-    #     print(item)
-    #     data.append(full_fitter('./X-Ray/data/copper_nickel_series/{}'.format(item),
-    #                 copper_bins[i],
-    #                 item[:-4], [3.5e-10, 0], mil_in= 'fcc' ))
-    #     legend.append(item[:4])
+    data = []
+    legend = []
+    for i,item in enumerate(os.listdir('./X-Ray/data/Cu3Au')):
+        print(item)
+        data.append(full_fitter('./X-Ray/data/Cu3Au/{}'.format(item),
+                    copper_bins[i],
+                    item[:-4], [3.5e-10, 0], mil_in= 'fcc' ))
+        legend.append(item[:4])
     
-    # plt.figure()
-    # plt.clf()
-    # plt.rcParams.update({'font.size': 30})
-    # for i,item in enumerate(data):
-    #     if i == 0:
-    #         plt.plot(item[0],item[1] + 900*(4-i) + 500, color = 'magenta')
-    #     else:
-    #         plt.plot(item[0],item[1] + 900*(4-i) + 500)
+    plt.figure()
+    plt.clf()
+    plt.rcParams.update({'font.size': 30})
+    for i,item in enumerate(data):
+        if i == 0:
+            plt.plot(item[0],item[1] + 900*(4-i) + 500, color = 'magenta')
+        else:
+            plt.plot(item[0],item[1] + 900*(4-i) + 500)
     # miller = np.load('./miller/fcc_indices.npz')['indices']
     # plt.legend(['100% Cu', '75% Cu 25% Ni', '50% Cu 50% Ni', '25% Cu 75% Ni', '100% Ni'], fontsize=24, loc = 'upper left')
     # positions = [44.5-1,52.0,76.2,92.9-1,98.7+0.5]
@@ -360,13 +391,13 @@ if __name__=="__main__":
     # for i in range(5):
     #     plt.text(positions[i] - 3, 200, '({} {} {})'.format(miller[i][0],miller[i][1],miller[i][2]),
     #      fontsize = 28)
-    # plt.ylim(0,5000)
-    # plt.xlim(20,105)
-    # plt.yticks([])
-    # plt.xlabel(r'$2\theta \ (^\circ)$')
-    # plt.ylabel('Counts')
-    # plt.tight_layout()
-    # plt.show()
+    plt.ylim(0,5000)
+    plt.xlim(20,105)
+    plt.yticks([])
+    plt.xlabel(r'$2\theta \ (^\circ)$')
+    plt.ylabel('Counts')
+    plt.tight_layout()
+    plt.show()
 
 
     

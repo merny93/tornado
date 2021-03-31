@@ -38,8 +38,8 @@ def residual_plot(x,data,noise,func,params, xlabel, ylabel1,ylabel2, filename, r
     axs[1].scatter(x, -y_pred+data, marker=".", s=25, c="black" , linewidth= 2)
     axs[1].errorbar(x, -y_pred+data, yerr = noise, linestyle="", c="black")
     axs[1].axhline(y=0,c="magenta", linestyle="--")
-    axs[1].set_yticklabels(labels = [-10,0,10])
-    axs[1].set_yticks([-10,0,10])
+    # axs[1].set_yticklabels(labels = [-10,0,10])
+    # axs[1].set_yticks([-10,0,10])
 
 
     
