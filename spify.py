@@ -83,8 +83,9 @@ def lattice_alloy_plot(data, litterature, header):
     plt.figure()
     plt.rcParams.update({'font.size': 18})
     plt.scatter(data[0], data[1], color = 'black')
-    plt.scatter(litterature[0], litterature[1], color = 'blue')
-    plt.legend(data[3]+litterature[2])
+    if litterature:
+        plt.scatter(litterature[0], litterature[1], color = 'blue')
+        plt.legend(data[3]+litterature[2])
     plt.errorbar(data[0], data[1], yerr=data[2], color = 'black', linestyle = "")
     plt.xlabel('% Nickel')
     plt.ylabel('Lattice Number')
